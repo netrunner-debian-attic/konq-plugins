@@ -1,0 +1,19 @@
+Index: konq-plugins-4.1~svn826310/konq-plugins/CMakeLists.txt
+===================================================================
+--- konq-plugins-4.1~svn826310.orig/konq-plugins/CMakeLists.txt	2008-06-30 16:09:06.000000000 +0200
++++ konq-plugins-4.1~svn826310/konq-plugins/CMakeLists.txt	2008-06-30 16:11:38.000000000 +0200
+@@ -1,7 +1,12 @@
+-add_subdirectory( crashes ) 
++# Built in Konqueror 4
++#add_subdirectory( crashes ) 
++
+ add_subdirectory( khtmlsettingsplugin ) 
+ add_subdirectory( kimgalleryplugin ) 
+-add_subdirectory( dirfilter ) 
++
++# Doesn't work anymore
++#add_subdirectory( dirfilter ) 
++
+ add_subdirectory( uachanger ) 
+ add_subdirectory( babelfish ) 
+ add_subdirectory( validators ) 

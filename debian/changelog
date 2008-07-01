@@ -1,0 +1,7 @@
+konq-plugins (4:4.1~svn826310-1) experimental; urgency=low
+
+  * Initial packaging (Closes: #488398)
+    From SVN revision 826310 (Mon 30 Jun 2008, 13:59:02 +0200
+
+ -- Xavier Vello <xavier.vello@gmail.com>  Mon, 30 Jun 2008 14:04:05 +0200
+

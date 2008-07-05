@@ -1,7 +1,5 @@
-Index: konq-plugins-4.1~svn826310/konq-plugins/CMakeLists.txt
-===================================================================
---- konq-plugins-4.1~svn826310.orig/konq-plugins/CMakeLists.txt	2008-06-30 16:09:06.000000000 +0200
-+++ konq-plugins-4.1~svn826310/konq-plugins/CMakeLists.txt	2008-06-30 16:11:38.000000000 +0200
+--- a/konq-plugins/CMakeLists.txt
++++ b/konq-plugins/CMakeLists.txt
 @@ -1,7 +1,12 @@
 -add_subdirectory( crashes ) 
 +# Built in Konqueror 4
@@ -17,3 +15,22 @@ Index: konq-plugins-4.1~svn826310/konq-plugins/CMakeLists.txt
  add_subdirectory( uachanger ) 
  add_subdirectory( babelfish ) 
  add_subdirectory( validators ) 
+@@ -20,5 +25,5 @@
+ # Need to port it to dbus and new mediamanager
+ #add_subdirectory( mediarealfolder ) 
+ 
+-add_subdirectory( akregator ) 
+-
++# Doesn't work in konqueror 4
++#add_subdirectory( akregator ) 
+--- a/doc/konq-plugins/CMakeLists.txt
++++ b/doc/konq-plugins/CMakeLists.txt
+@@ -1,6 +1,6 @@
+ add_subdirectory(babel)
+-add_subdirectory(crashes)
+-add_subdirectory(dirfilter)
++#add_subdirectory(crashes)
++#add_subdirectory(dirfilter)
+ add_subdirectory(domtreeviewer)
+ add_subdirectory(fsview)
+ add_subdirectory(imgallery)

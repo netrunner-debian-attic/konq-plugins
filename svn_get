@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# svn_get by Xavier Vello <xavier.vello@student.ecp.fr>, public domain
+# Gets a module from the kde svn trunk and builds the .orig.tar.gz, ready to build 
+# Depends: subversion, kdesdk-scripts(>=4:4)
+
+# Configure here
+SVN_MODULE="extragear/base"
+PACKAGE="konq-plugins"
+VERSION_PREFIX="4.1~svn"
+GLOBAL_REV=0    # can be set to :
+                # 1 : global kde svn revision for snapshot
+                # 0 : last changed rev of the package (more accurate)
+
+
+
+svn co svn://anonsvn.kde.org/home/kde/trunk/$SVN_MODULE
+
+if [ $GLOBAL_REV = 1 ]; then
+  REV=`LANG=C svn info $(basename $SVN_MODULE) | grep '^Revision' | sed -e 's/Revision: *//'`
+else
+  REV=`LANG=C svn info $(basename $SVN_MODULE) | grep '^Last Changed Rev' | sed -e 's/Last Changed Rev: *//'`
+fi
+
+svn2dist -m --no-bzip2 --no-i18n -d -v $VERSION_PREFIX$REV base/ $PACKAGE
+mv $PACKAGE-$VERSION_PREFIX$REV.tar.gz $PACKAGE_$VERSION_PREFIX$REV.orig.tar.gz
+
+echo ""
+echo "  SVN info"
+echo "  | "`LANG=C svn info $(basename $SVN_MODULE)/$PACKAGE | grep '^Revision'`
+echo "  | "`LANG=C svn info $(basename $SVN_MODULE)/$PACKAGE | grep '^Last Changed Rev'`
+echo "  | "`LANG=C svn info $(basename $SVN_MODULE)/$PACKAGE | grep '^Last Changed Author'`
+echo "  | "`LANG=C svn info $(basename $SVN_MODULE)/$PACKAGE | grep '^Last Changed Date'`
+echo ""
+echo "Got $PACKAGE revision $REV from svn. Now copy the debian/ directory and start to work :)"

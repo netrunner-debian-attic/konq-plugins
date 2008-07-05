@@ -1,0 +1,12 @@
+As a svn snapshot, this software isn't finished. Some plugins
+have been disabled because they are buggy or incomplete :
+
+  * crashes : built in konqueror 4
+  * dirfilter : doesn't work anymore
+  * akregator : doesn't work anymore
+
+Some have been disabled by upstream :
+
+  * sidebar/mediaplayer
+  * sidebar/metabar
+  * mediarealfolder

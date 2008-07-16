@@ -23,7 +23,7 @@ else
 fi
 
 svn2dist -m --no-bzip2 --no-i18n -d -v $VERSION_PREFIX$REV base/ $PACKAGE
-mv $PACKAGE-$VERSION_PREFIX$REV.tar.gz $PACKAGE_$VERSION_PREFIX$REV.orig.tar.gz
+mv $PACKAGE-$VERSION_PREFIX$REV.tar.gz "$PACKAGE"_$VERSION_PREFIX$REV.orig.tar.gz
 
 echo ""
 echo "  SVN info"

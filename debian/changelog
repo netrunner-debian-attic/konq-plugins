@@ -1,15 +1,17 @@
-konq-plugins (4:4.1~svn827788-1) UNRELEASED; urgency=low
+konq-plugins (4:4.1~svn831101) UNRELEASED; urgency=low
 
-  * New snapshot (2008-07-03 21:28:43 +0200)
+  * New snapshot (2008-07-11 23:09:38 +0200)
     - fix autorefresh version
-  * Not building akregator plugin (doesn't work)
+    - don't clear searchbar when launching search
 
+  * Not building akregator plugin (doesn't work)
   * Ported build system to cdbs
   * /usr/share/kde4/conf/translaterc is a configuration file
   * Described disabled plugins in README.debian
   * Not packaging documentation for disabled plugins
+  * Added README.source
 
- -- Xavier Vello <xavier.vello@gmail.com>  Sat, 05 Jul 2008 18:00:28 +0200
+ -- Xavier Vello <xavier.vello@gmail.com>  Wed, 16 Jul 2008 18:07:35 +0200
 
 konq-plugins (4:4.1~svn826310-1) experimental; urgency=low
 

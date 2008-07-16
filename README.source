@@ -1,0 +1,9 @@
+Package konq-plugins
+--------------------
+
+For the moment, there is no extragear/konq-plugins official release
+tarballs. You can get the source from the KDE svn, using preferably
+the svn_get script available at :
+svn.debian.org/pkg-kde/kde-extras/konq-plugins/trunk/svn_get
+
+This package uses cdbs and quilt.

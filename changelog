@@ -10,6 +10,7 @@ konq-plugins (4:4.1~svn831101) UNRELEASED; urgency=low
   * Described disabled plugins in README.debian
   * Not packaging documentation for disabled plugins
   * Added README.source
+  * New patch 97_fix_target_link_libraries
 
  -- Xavier Vello <xavier.vello@gmail.com>  Wed, 16 Jul 2008 18:07:35 +0200
 

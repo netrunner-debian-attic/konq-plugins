@@ -1,3 +1,10 @@
+konq-plugins (4:4.1.0-1) UNRELEASED; urgency=low
+
+  * New upstream release, no new feature
+  * Removed 97_fix_target_link_libraries
+
+ -- Xavier Vello <xavier.vello@gmail.com>  Thu, 24 Jul 2008 21:30:00 +0200
+
 konq-plugins (4:4.1~svn831101) experimental; urgency=low
 
   * New snapshot (2008-07-11 23:09:38 +0200)

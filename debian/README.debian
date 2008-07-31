@@ -1,5 +1,4 @@
-As a svn snapshot, this software isn't finished. Some plugins
-have been disabled because they are buggy or incomplete :
+Some plugins have been disabled because they are buggy or incomplete :
 
   * crashes : built in konqueror 4
   * dirfilter : doesn't work anymore

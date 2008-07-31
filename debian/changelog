@@ -1,7 +1,7 @@
 konq-plugins (4:4.1.0-1) experimental; urgency=low
 
-  * Upstream tarball, no new feature since svn831101
-  * Removed 97_fix_target_link_libraries
+  * Upstream tarball, no new features since svn r831101.
+  * Removed 97_fix_target_link_libraries,
 
  -- Xavier Vello <xavier.vello@gmail.com>  Thu, 24 Jul 2008 21:30:00 +0200
 

@@ -1,4 +1,4 @@
-konq-plugins (4:4.1.0-1) UNRELEASED; urgency=low
+konq-plugins (4:4.1.0-1) experimental; urgency=low
 
   * New upstream release, no new feature
   * Removed 97_fix_target_link_libraries

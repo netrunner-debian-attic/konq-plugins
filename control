@@ -9,6 +9,7 @@ Standards-Version: 3.8.0
 Package: konq-plugins
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.1.0), python, libjpeg-progs
+Conflicts: kde-i18n
 Enhances: konqueror
 Recommends: imagemagick
 Description: plugins for Konqueror, the KDE file/web/doc browser

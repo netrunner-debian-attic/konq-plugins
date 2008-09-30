@@ -1,4 +1,4 @@
-konq-plugins (4:4.1.2-1) UNRELEASED; urgency=low
+konq-plugins (4:4.1.2-1) experimental; urgency=low
 
   * New upstream release 
   * Akregator feed icon is back

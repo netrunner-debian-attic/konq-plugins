@@ -1,3 +1,10 @@
+konq-plugins (4:4.1.2-1) UNRELEASED; urgency=low
+
+  * New upstream release 
+  * Akregator feed icon is back
+
+ -- Xavier Vello <xavier.vello@gmail.com>  Tue, 30 Sep 2008 11:08:43 +0200
+
 konq-plugins (4:4.1.0-2) experimental; urgency=low
 
   * Add conflict with kde-i18n (Closes: #495934)

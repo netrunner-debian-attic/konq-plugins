@@ -1,7 +1,6 @@
 Some plugins have been disabled because they are buggy or incomplete :
   * crashes : built in konqueror 4
-  * dirfilter : doesn't work anymore
-  * akregator : doesn't work anymore
+  * dirfilter : dolphin only
 
 Some have been disabled by upstream :
   * sidebar/mediaplayer

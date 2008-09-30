@@ -15,14 +15,6 @@
  add_subdirectory( uachanger ) 
  add_subdirectory( babelfish ) 
  add_subdirectory( validators ) 
-@@ -20,5 +25,5 @@
- # Need to port it to dbus and new mediamanager
- #add_subdirectory( mediarealfolder ) 
- 
--add_subdirectory( akregator ) 
--
-+# Doesn't work in konqueror 4
-+#add_subdirectory( akregator ) 
 --- a/doc/konq-plugins/CMakeLists.txt
 +++ b/doc/konq-plugins/CMakeLists.txt
 @@ -1,6 +1,6 @@

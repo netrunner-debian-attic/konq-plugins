@@ -1,3 +1,10 @@
+konq-plugins (4:4.1.3-1) UNRELEASED; urgency=low
+
+  * New upstream release
+    - reverted webarchiver to 4.1.2 (4.1.3 requires trunk) 
+
+ -- Xavier Vello <xavier.vello@gmail.com>  Fri, 07 Nov 2008 01:08:46 +0100
+
 konq-plugins (4:4.1.2-1) experimental; urgency=low
 
   * New upstream release 

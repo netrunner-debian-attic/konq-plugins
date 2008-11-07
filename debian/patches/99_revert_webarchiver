@@ -1,0 +1,2536 @@
+--- a/konq-plugins/webarchiver/archivedialog.cpp
++++ b/konq-plugins/webarchiver/archivedialog.cpp
+@@ -1,7 +1,6 @@
+ /*
+    Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
+    Copyright (C) 2003 Antonio Larrosa <larrosa@kde.org>
+-   Copyright (C) 2008 Matthias Grimrath <maps4711@gmx.de>
+ 
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public
+@@ -15,1365 +14,533 @@
+ 
+    You should have received a copy of the GNU General Public License
+    along with this program; see the file COPYING.  If not, write to
+-   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+-   Boston, MA 02111-1307, USA.
++   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.
+ */
+ 
+-// The DOM-tree is recursed twice. The first run gathers all URLs while the second
+-// run writes out all HTML frames and CSS stylesheets. These two distinct runs are
+-// necessary, because some frames and/or stylesheets may be dropped (for example
+-// a frame currently not displayed or deemed insecure). In that case an URL that
+-// points to such a frame/stylesheet has to be removed. Since the URL may be mentioned
+-// earlier before recursing to the to-be-removed frame, two runs are necessary to get
+-// a complete list of URLs that should be archived.
+-
+-// Changelog
+-// * replace dynamic_cast<> and ->inherits() with qobject_cast<>
+-// * use QHash instead of QMap; get rid of Ordered<> class
+-// * fixed crash / assertion on Konqueror exit after a webpage was archived
+-//   See comment about KHTMLView parent widget in plugin_webarchiver.cpp
+-// * Using KDE4/Qt4 KUrl::equals() and QUrl::fragment() to compare Urls
+-// * KHTML stores comment with a trailing '-'. Looks like some off-by-one bug.
+-// * Add mimetype indicating suffix to downloaded files.
+-
+-// DONE CSS mentioned in <link> elements that are not parsed by Konqueror did not get their
+-//      href='' resolved/removed
+-
+-// TODO if href= etc links in a frameset refer to frames currently displayed, make links relative
+-//      to archived page instead of absolute
+-// TODO KDE4 webarchiver: look at m_bPreserveWS
+-// TODO KDE4 webarchiver: look at closing tags
+-// TODO check if PartFrameData::framesWithName get a 'KHTMLPart *' if any
+-// TODO KHTMLPart::frames(): Is it possible to have NULL pointers in returned list?
+-// TODO If downloaded object need no data conversion, use KIO::file_copy or signal data()
+-// TODO KDE4 check what KHTMLPart is doing on job->addMetaData()
+-// TODO KDE4 use HTMLScriptElementImpl::charset() to get charset="" attribute of <link> elements
+-
+-
+-#include <cassert>
+-
++#include "archivedialog.h"
+ #include <qwidget.h>
+-#include <qtextstream.h>
+-#include <qtextdocument.h>
+-#include <qtreewidget.h>
+-#include <qtimer.h>
+-
+-#include <kdebug.h>
++//Added by qt3to4:
++#include <QTextStream>
++#include <khtml_part.h>
++#include <kcomponentdata.h>
++#include <ktemporaryfile.h>
+ #include <ktar.h>
+-#include <kauthorized.h>
+-#include <kcharsets.h>
+ 
+ #include <kfiledialog.h>
+ #include <kmessagebox.h>
+-#include <kstringhandler.h>
+-
+-#include <khtml_part.h>
+-#include <dom/css_rule.h>
+-#include <dom/css_stylesheet.h>
+-#include <dom/css_value.h>
+-
+-#include "archivedialog.h"
+-
+-// Set to true if you have a patched http-io-slave that has
+-// improved offline-browsing functionality.
+-static const bool patchedHttpSlave = false;
+-
+-#define CONTENT_TYPE "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />"
+-
+-
+-//
+-// Qt 4.x offers a @c foreach pseudo keyword. This is however slightly slower than FOR_ITER
+-// because @c foreach makes a shared copy of the container.
+-//
+-#define FOR_ITER(type,var,it) for (type::iterator it(var.begin()), it##end(var.end()); it != it##end; ++it)
+-#define FOR_CONST_ITER(type,var,it) for (type::const_iterator it(var.begin()), it##end(var.end()); it != it##end; ++it)
+-#define FOR_ITER_TEMPLATE(type,var,it) for (typename type::iterator it(var.begin()), it##end(var.end()); it != it##end; ++it)
+-
+-
+-static const mode_t archivePerms = S_IFREG | 0644;
++#include <kpassivepopup.h>
++#include <klocale.h>
++#include <kio/netaccess.h>
++#include <kdebug.h>
++#include <kgenericfactory.h>
++#include <QTextDocument>
++#include <qiodevice.h>
++#include <k3listview.h>
++#include <kio/job.h>
++#include <kurllabel.h>
+ 
+-typedef QList<KParts::ReadOnlyPart *> ROPartList;
++#include <kstringhandler.h>
+ 
+-//
+-// functions needed for storing certain DOM elements in a QHash<>
+-//
+-namespace DOM {
++#undef DEBUG_WAR
+ 
+-inline uint qHash(const CSSStyleSheet &a) {
+-    return ::qHash(static_cast<void *>(a.handle()));
+-}
++#define CONTENT_TYPE "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">"
+ 
+-inline bool operator==(const DOM::CSSStyleSheet &a, const DOM::CSSStyleSheet &b) {
+-    return a.handle() == b.handle();
+-}
++ArchiveDialog::ArchiveDialog(QWidget *parent, const QString &filename,
++        KHTMLPart *part) :
++        KDialog(parent ),
++        m_bPreserveWS(false), m_tmpFile(0), m_url(part->url())
++{
++   setCaption(i18n("Web Archiver"));
++   setButtons(KDialog::Ok | KDialog::Cancel | KDialog::User1 );
++   setDefaultButton(KDialog::Ok);
++   setModal(false);
++   m_widget=new ArchiveViewBase(this);
++   setMainWidget(m_widget);
++   //setWFlags(getWFlags() | WDestructiveClose);
++
++   m_widget->urlLabel->setText(QString("<a href=\"")+m_url.url()+"\">"+KStringHandler::csqueeze( m_url.url(), 80 )+"</a>");
++   m_widget->targetLabel->setText(QString("<a href=\"")+filename+"\">"+KStringHandler::csqueeze( filename, 80 )+"</a>");
++
++   if(part->document().ownerDocument().isNull())
++      m_document = part->document();
++   else
++      m_document = part->document().ownerDocument();
++
++   enableButton(Ok, false );
++   showButton( KDialog::User1, false );
++   setButtonGuiItem( KDialog::Ok, KStandardGuiItem::close() );
+ 
+-inline uint qHash(const Node &a) {
+-    return ::qHash(static_cast<void *>(a.handle()));
++   m_tarBall = new KTar(filename,"application/x-gzip");
+ }
+ 
+-}// namespace DOM
++void ArchiveDialog::archive()
++{
++   m_iterator=0;
++   m_currentLVI=0;
++   if (m_tarBall->open(QIODevice::WriteOnly)) {
++#ifdef DEBUG_WAR
++      kDebug(90110) << "Web Archive opened ";
++#endif
+ 
++      m_linkDict.insert(QString("index.html"), QString(""));
++      saveFile("index.html");
+ 
+-//
+-// elems with 'type' attr: object, param, link, script, style
+-//
+-
+-// TODO convert to bsearch? probably more time and memory efficient
+-ArchiveDialog::NonCDataAttr::NonCDataAttr() {
+-    static const char * const non_cdata[] = {
+-        "id", "dir", "shape", "tabindex", "align", "nohref", "clear"
+-        // Unfinished...
+-    };
+-    for (int i=0; i!= (sizeof(non_cdata) / sizeof(non_cdata[0])); ++i)
+-        insert(non_cdata[i]);
++   } else {
++     const QString title = i18n( "Unable to Open Web-Archive" );
++     const QString text = i18n( "Unable to open \n %1 \n for writing." , m_tarBall->fileName());
++     KMessageBox::sorry( 0L, text, title );
++   }
+ }
+ 
+-// TODO lazy init?
+-ArchiveDialog::NonCDataAttr ArchiveDialog::non_cdata_attr;
+-
+-
+-
+-
+-ArchiveDialog::RecurseData::RecurseData(KHTMLPart *_part, QTextStream *_textStream, PartFrameData *pfd)
+-  : part(_part), textStream(_textStream), partFrameData(pfd), document(_part->htmlDocument()),
+-    baseSeen(false)
++ArchiveDialog::~ArchiveDialog()
+ {
+-    Q_ASSERT( !document.isNull() );
++   delete m_tarBall;
+ }
+ 
++/* Store the HTMLized DOM-Tree to a temporary file and add it to the Tar-Ball */
+ 
+-
+-
+-ArchiveDialog::ArchiveDialog(QWidget *parent, const QString &filename, KHTMLPart *part)
+-  : KDialog(parent), m_top(part), m_job(NULL), m_uniqId(2), m_tarBall(NULL), m_filename(filename), m_widget(NULL)
++void ArchiveDialog::saveFile( const QString&)
+ {
+-    setCaption(i18n("Web Archiver"));
+-    setButtons(KDialog::Ok | KDialog::Cancel | KDialog::User1 );
+-    setDefaultButton(KDialog::Ok);
+-    setModal(false);
+-    m_widget = new ArchiveViewBase(this);
+-    {
+-        QTreeWidgetItem *twi = m_widget->progressView->headerItem();
+-        twi->setText(0, i18n("Status"));
+-        twi->setText(1, i18n("Url"));
+-    }
+-    setMainWidget(m_widget);
+-    connect(this, SIGNAL(finished()), SLOT(slotDialogFinished()));
+-
+-    KUrl srcURL = part->url();
+-    m_widget->urlLabel->setText(QString("<a href=\"") + srcURL.url() + "\">" +
+-                                KStringHandler::csqueeze( srcURL.prettyUrl(), 80 ) + "</a>");
+-    m_widget->targetLabel->setText(QString("<a href=\"") + filename + "\">" +
+-                                   KStringHandler::csqueeze( filename, 80 ) + "</a>");
+-
+-    //if(part->document().ownerDocument().isNull())
+-    //   m_document = part->document();
+-    //else
+-    //   m_document = part->document().ownerDocument();
+-
+-    enableButton(Ok, false );
+-    showButton(KDialog::User1, false);
+-    setButtonGuiItem(KDialog::Ok, KStandardGuiItem::close());
+-
+-    m_tarBall = new KTar(filename, "application/x-gzip");
+-    m_archiveTime = QDateTime::currentDateTime().toTime_t();
+-}
+-
+-ArchiveDialog::~ArchiveDialog() {
+-    // TODO cancel outstanding download jobs?
+-    kDebug(90110) << "destroying";
+-    if (m_job) {
+-        m_job->kill();
+-        m_job = NULL;
+-    }
+-    delete m_tarBall; m_tarBall = NULL;
+-}
+-
+-
+-
+-void ArchiveDialog::archive() {
+-    if (m_tarBall->open(QIODevice::WriteOnly)) {
+-
+-        obtainURLs();
+-
+-        // Assign unique tarname to URLs
+-        // Split m_url2tar into Stylesheets / non stylesheets
+-        m_objects.clear();
+-        assert(static_cast<ssize_t>(m_url2tar.size()) - static_cast<ssize_t>(m_cssURLs.size()) >= 0);
+-//         m_objects.reserve(m_url2tar.size() - m_cssURLs.size());
+-        FOR_ITER(UrlTarMap, m_url2tar, u2t_it) {
+-            const KUrl &url = u2t_it.key();
+-            DownloadInfo &info = u2t_it.value();
+-
+-            assert( info.tarName.isNull() );
+-//             info.tarName = uniqTarName( url.fileName(), 0 );
+-
+-            // To able to append mimetype hinting suffixes to tarnames, for instance adding '.gif' to a
+-            // webbug '87626734' adding the name to the url-to-tarname map is defered.
+-            // This cannot be done with CSS because CSS may reference each other so when URLS
+-            // of the first CSS are changed all tarnames need to be there.
+-            //
+-            if ( m_cssURLs.find( url ) == m_cssURLs.end() ) {
+-                m_objects.append( u2t_it );
+-            } else {
+-                info.tarName = uniqTarName( url.fileName(), 0 );
+-            }
+-        }
+-
+-        QProgressBar *pb = m_widget->progressBar;
+-        pb->setMaximum(m_url2tar.count() + 1);
+-        pb->setValue(0);
+-
+-        m_objects_it = m_objects.begin();
+-        downloadObjects();
+-
+-    } else {
+-        const QString title = i18n( "Unable to Open Web-Archive" );
+-        const QString text = i18n( "Unable to open \n %1 \n for writing." ).arg(m_tarBall->fileName());
+-        KMessageBox::sorry(NULL, text, title);
+-    }
+-}
+-
+-void ArchiveDialog::downloadObjects() {
+-
+-    if ( m_objects_it == m_objects.end() ) {
+-
+-        m_styleSheets_it = m_cssURLs.begin();
+-        downloadStyleSheets();
+-
+-    } else {
+-
+-        m_dlurl2tar_it = (*m_objects_it);
+-        const KUrl &url    = m_dlurl2tar_it.key();
+-        DownloadInfo &info = m_dlurl2tar_it.value();
+-        assert( m_dlurl2tar_it != m_url2tar.end() );
+-
+-        Q_ASSERT(m_job == NULL);
+-        m_job = startDownload( url, info.part );
+-        connect(m_job, SIGNAL( result(KJob *) ), SLOT( slotObjectFinished(KJob *) ) );
+-    }
+-}
+-
+-void ArchiveDialog::slotObjectFinished( KJob *_job ) {
+-    KIO::StoredTransferJob *job = qobject_cast<KIO::StoredTransferJob *>(_job);
+-    Q_ASSERT(job == m_job);
+-    m_job = NULL;
+-    const KUrl &url    = m_dlurl2tar_it.key();
+-    DownloadInfo &info = m_dlurl2tar_it.value();
+-
+-    assert(info.tarName.isNull());
+-    bool error = job->error();
+-    if ( !error ) {
+-        const QString &mimetype( job->mimetype() );
+-        info.tarName = uniqTarName( appendMimeTypeSuffix(url.fileName(), mimetype), 0 );
+-
+-        QByteArray data( job->data() );
+-        const QString &tarName = info.tarName;
+-
+-//         kDebug(90110) << "downloaded " << url.prettyUrl() << "size=" << data.size() << "mimetype" << mimetype;
+-        error = ! m_tarBall->writeFile(tarName, QString::null, QString::null, data.data(), data.size(),
+-                                       archivePerms, m_archiveTime, m_archiveTime, m_archiveTime);
+-        if (error) {
+-            kDebug(90110) << "Error writing to archive file";
+-            finishedArchiving(true);
+-            return;
+-        }
+-    } else {
+-        info.tarName.clear();
+-        kDebug(90110) << "download error for url='" << url.prettyUrl();
+-    }
+-
+-    endProgressInfo(error);
+-    ++m_objects_it;
+-    downloadObjects();
+-}
+-
+-
+-void ArchiveDialog::downloadStyleSheets() {
+-    if (m_styleSheets_it == m_cssURLs.end()) {
+-
+-        saveWebpages();
+-
+-    } else {
+-
+-//         QTimer::singleShot(3000, this, SLOT(slotDownloadStyleSheetsDelay()));
+-        const KUrl &url = m_styleSheets_it.key();
+-        m_dlurl2tar_it = m_url2tar.find( url );
+-        assert( m_dlurl2tar_it != m_url2tar.end() );
+-        DownloadInfo &info = m_dlurl2tar_it.value();
+-
+-        Q_ASSERT(m_job == NULL);
+-        m_job = startDownload( url, info.part );
+-        connect(m_job, SIGNAL( result( KJob* ) ), SLOT( slotStyleSheetFinished( KJob * ) ) );
+-    }
+-}
+-
+-
+-
+-void ArchiveDialog::slotStyleSheetFinished( KJob *_job ) {
+-    KIO::StoredTransferJob *job = qobject_cast<KIO::StoredTransferJob *>(_job);
+-    Q_ASSERT(job == m_job);
+-    m_job = NULL;
+-    const KUrl &url    = m_dlurl2tar_it.key();
+-    DownloadInfo &info = m_dlurl2tar_it.value();
+-
+-    bool error = job->error();
+-    if (! error) {
+-        QByteArray data( job->data() );
+-        const QString &tarName = info.tarName;
+-
+-        URLsInStyleSheet::Iterator uss_it = m_URLsInStyleSheet.find( m_styleSheets_it.value() );
+-        assert( uss_it != m_URLsInStyleSheet.end() );
+-
+-        DOM::DOMString ds( uss_it.key().charset() );
+-        QString cssCharSet( ds.string() );
+-        bool ok;
+-        QTextCodec *codec = KGlobal::charsets()->codecForName(cssCharSet, ok);
+-        kDebug(90110) << "translating URLs in CSS" << url.prettyUrl() << "charset=" << cssCharSet << " found=" << ok;
+-        assert( codec );
+-        QString css_text = codec->toUnicode( data );
+-        data.clear();
+-        // Do *NOT* delete 'codec'!  These are allocated by Qt
+-
+-        changeCSSURLs( css_text, uss_it.value() );
+-        data = codec->fromUnicode( css_text );
+-        css_text.clear();
+-
+-        error = ! m_tarBall->writeFile(tarName, QString::null, QString::null, data.data(), data.size(),
+-                                       archivePerms, m_archiveTime, m_archiveTime, m_archiveTime);
+-        if (error) {
+-            kDebug(90110) << "Error writing to archive file";
+-            finishedArchiving(true);
+-            return;
+-        }
+-    } else {
+-        info.tarName.clear();
+-        kDebug(90110) << "download error for css url='" << url.prettyUrl();
+-    }
+-
+-    endProgressInfo(error);
+-    ++m_styleSheets_it;
+-    downloadStyleSheets();
+-}
+-
+-
+-
+-KIO::Job *ArchiveDialog::startDownload( const KUrl &url, KHTMLPart *part ) {
+-    QTreeWidgetItem *twi = new QTreeWidgetItem;
+-    twi->setText(0, i18n("Downloading"));
+-    twi->setText(1, url.prettyUrl());
+-    QTreeWidget *tw = m_widget->progressView;
+-    tw->insertTopLevelItem(0, twi);
+-
+-    KIO::Job *job = KIO::storedGet(url, KIO::NoReload, KIO::HideProgressInfo);
+-
+-    // Use entry from cache only. Avoids re-downloading. Requires modified kio_http slave.
+-    job->addMetaData("cache", patchedHttpSlave ? "cacheonly" : "cache");
+-
+-    // This is a duplication of the code in loader.cpp: Loader::servePendingRequests()
+-
+-    //job->addMetaData("accept", req->object->accept());
+-    job->addMetaData( "referrer", part->url().url() );
+-    job->addMetaData( "cross-domain", part->toplevelURL().url() );
+-
+-    return job;
+-}
+-
+-void ArchiveDialog::endProgressInfo(bool error) {
+-    QTreeWidget *tw = m_widget->progressView;
+-    tw->topLevelItem(0)->setText(0, error ? i18n("Error") : i18n("Ok"));
+-    QProgressBar *pb = m_widget->progressBar;
+-    pb->setValue(pb->value() + 1);
+-}
+-
+-
+-
++     QString temp;
+ 
++     m_state=Retrieving;
++     QTextStream *tempStream = new QTextStream(&temp, QIODevice::ReadOnly);
+ 
++     saveToArchive(tempStream);
+ 
+-void ArchiveDialog::saveWebpages() {
+-    bool error = saveTopFrame();
+-    if (error) {
+-        kDebug(90110) << "Error writing to archive file";
+-        finishedArchiving(true);
+-        return;
+-    }
+-    QProgressBar *pb = m_widget->progressBar;
+-    pb->setValue(pb->value() + 1);
+-
+-//     KMessageBox::information(0, i18n( "Archiving webpage completed." ), QString::null, QString::null, false);
+-    finishedArchiving(false);
+-}
+-
+-
+-
+-void ArchiveDialog::finishedArchiving(bool tarerror) {
+-    if (tarerror) {
+-        KMessageBox::error(this, i18n("I/O error occured while writing to web archive file %1", m_tarBall->fileName()));
+-    }
+-    m_tarBall->close();
+-
+-    m_widget->progressView->sortItems(0, Qt::AscendingOrder);
+-    enableButtonOk(true);
+-    setEscapeButton(Ok);
+-    enableButtonCancel(false);
+-}
+-
+-void ArchiveDialog::slotButtonClicked(int) {
+-    deleteLater();  // Keep memory consumption low
+-}
++     delete tempStream;
+ 
++     m_downloadedURLDict.clear();
+ 
+-// This is the mess you get because C++ lacks a lambda generator
+-//
+-// The whole purpose of the Get* classes is to parametrize what
+-// attribute of a KHTMLPart object should be fetched.
+-//
+-// GetName and GetURL are used for the 'class FuncObj' parameter
+-// class in the template function filterFrameMappings below
+-struct GetFromPart {
+-    const KHTMLPart *child;
+-
+-    GetFromPart(const KHTMLPart *_child) : child(_child) { }
+-};
+-
+-struct GetName : public GetFromPart {
+-    GetName(const KHTMLPart *child) : GetFromPart(child) { }
+-
+-    operator QString () { return child->objectName(); }
+-};
+-struct GetURL : public GetFromPart {
+-    GetURL(const KHTMLPart *child) : GetFromPart(child) { }
+-
+-    operator KUrl () { return child->url(); }
+-};
+-
+-template< class Id2Part, class FuncObj >
+-static void filterFrameMappings(KHTMLPart *part, Id2Part &result) {
+-    Id2Part existing_frames;
+-
+-    // TODO this can probably be optimized: no temp of existing, directly store to be removed parts.
+-    ROPartList childParts( part->frames() );
+-    FOR_ITER(ROPartList, childParts, child_it) {
+-        // TODO It is not clear from browsing the source code of KHTML if *child_it may be NULL
+-        Q_ASSERT(*child_it);
+-        KHTMLPart *cp = qobject_cast<KHTMLPart *>(*child_it);
+-        if (cp) {
+-            existing_frames.insert( FuncObj(cp), cp );
+-        }
+-    }
+-
+-    typedef QList< typename Id2Part::Iterator > IdRemoveList;
+-    IdRemoveList beRemoved;
+-
+-    FOR_ITER_TEMPLATE(Id2Part, result, it) {
+-        typename Id2Part::Iterator exists_it = existing_frames.find( it.key() );
+-        if ( exists_it == existing_frames.end() )
+-            beRemoved.append( it );
+-        else
+-            it.value() = exists_it.value();
+-    }
+-    FOR_ITER_TEMPLATE(IdRemoveList, beRemoved, rem_it) {
+-        result.erase( (*rem_it) );
+-        kDebug(90110) << "removing insecure(?) frame='" << (*rem_it).key();
+-    }
++     m_state=Downloading;
++     m_widget->progressBar->setMaximum(m_urlsToDownload.count());
++     m_widget->progressBar->setValue(0);
++     downloadNext();
+ }
+ 
+-template static void filterFrameMappings< ArchiveDialog::Name2Part, GetName >(KHTMLPart *, ArchiveDialog::Name2Part &);
+-template static void filterFrameMappings< ArchiveDialog::URL2Part, GetURL >(KHTMLPart *, ArchiveDialog::URL2Part &);
+-
+-
+-
+-
+-/**
+- * Recursively traverses the DOM-Tree extracting all URLs that need to be downloaded
+- */
+-void ArchiveDialog::obtainURLs() {
+-    m_url2tar.clear();
+-    m_tarName2part.clear();
+-    m_framesInPart.clear();
+-    m_cssURLs.clear();
+-    m_URLsInStyleSheet.clear();
+-    m_URLsInStyleElement.clear();
+-    m_topStyleSheets.clear();
+-
+-    obtainURLsLower(m_top, 0);
+-
+-    FOR_ITER(FramesInPart, m_framesInPart, fip_it) {
+-        KHTMLPart     *part = fip_it.key();
+-        PartFrameData &pfd  = fip_it.value();
+-
+-        // Remove all frames obtained from the DOM tree parse
+-        // that do not have a corresponding KHTMLPart as a direct child.
+-
+-        // Do NOT use KHTMLPart::findFrame()! This one searches recursively all subframes as well!
+-        filterFrameMappings< Name2Part, GetName >(part, pfd.framesWithName);
+-        filterFrameMappings< URL2Part, GetURL >(part, pfd.framesWithURLOnly);
+-   }
+-   assert(! m_framesInPart.empty());
+-#if 0
+-    FOR_ITER(CSSURLSet, m_cssURLs, it) {
+-        kDebug(90110) << "to be downloaded stylesheet='" << it.key();
+-    }
+-    FOR_ITER(URLsInStyleSheet, m_URLsInStyleSheet, ss2u_it) {
+-        kDebug(90110) << "raw URLs in sheet='" << ss2u_it.key().href();
+-        FOR_ITER(RawHRef2FullURL, ss2u_it.data(), c2f_it) {
+-            kDebug(90110) << "   url='" << c2f_it.key() << "' -> '" << c2f_it.data().prettyUrl();
+-        }
+-    }
+-    FOR_ITER(URLsInStyleElement, m_URLsInStyleElement, e2u_it) {
+-        kDebug(90110) << "raw URLs in style-element:";
+-        FOR_ITER(RawHRef2FullURL, e2u_it.data(), c2f_it) {
+-            kDebug(90110) << "   url='" << c2f_it.key() << "' -> '" << c2f_it.data().prettyUrl();
+-        }
+-    }
++void ArchiveDialog::setSavingState()
++{
++   KTemporaryFile tmpFile;
++   tmpFile.open();
++   QTextStream* textStream = new QTextStream(&tmpFile);
++   textStream->setCodec( "UTF8" );
++
++   m_widget->progressBar->setValue(m_widget->progressBar->maximum());
++
++   m_state=Saving;
++   saveToArchive(textStream);
++   textStream->flush();
++
++   QString fileName="index.html";
++   tmpFile.seek(0);
++   m_tarBall->writeFile(fileName, QString(), QString(), tmpFile.readAll(), tmpFile.size());
++#ifdef DEBUG_WAR
++   kDebug(90110) << "HTML-file written: " << fileName;
+ #endif
+-}
+-
+-
+-void ArchiveDialog::obtainStyleSheetURLsLower(DOM::CSSStyleSheet css, RecurseData &data) {
+-
+-    //kDebug(90110) << "stylesheet title='" << styleSheet.title().string() << "' "
+-    //                "type='" << styleSheet.type().string();
+-
+-    RawHRef2FullURL &raw2full = m_URLsInStyleSheet.insert( css, RawHRef2FullURL()).value();
+-
+-    DOM::CSSRuleList crl = css.cssRules();
+-    for (int j=0; j != static_cast<int>(crl.length()); ++j) {
+-
+-        DOM::CSSRule cr = crl.item(j);
+-        switch (cr.type()) {
+-
+-        case DOM::CSSRule::STYLE_RULE: {
+-            const DOM::CSSStyleRule &csr = static_cast<DOM::CSSStyleRule &>(cr);
+ 
+-            //kDebug(90110) << "found selector '" << csr.selectorText();
+-            parseStyleDeclaration( css.baseUrl(), csr.style(), raw2full, data );
+-        } break;
++   // Cleaning up
++   delete textStream;
++   m_tarBall->close();
+ 
+-        case DOM::CSSRule::IMPORT_RULE: {
+-            const DOM::CSSImportRule &cir = static_cast<DOM::CSSImportRule &>(cr);
++   KPassivePopup::message( m_url.prettyUrl() , i18n( "Archiving webpage completed." ), this );
+ 
+-            DOM::CSSStyleSheet importSheet = cir.styleSheet();
+-            if ( importSheet.isNull() ) {
+-
+-                // Given stylesheet was not downloaded / parsed by KHTML
+-                // Remove that URL from the stylesheet
+-                kDebug(90110) << "stylesheet: invalid @import url('" << cir.href() << "')";
+-
+-                raw2full.insert( cir.href().string(), KUrl() );
+-
+-            } else {
+-
+-                kDebug(90110) << "stylesheet: @import url('" << cir.href() << "') found";
+-
+-                QString href = cir.href().string();
+-                Q_ASSERT( !href.isNull() );
+-
+-                KUrl fullURL  = importSheet.baseUrl();
+-                bool inserted = insertHRefFromStyleSheet( href, raw2full, fullURL, data );
+-                if ( inserted ) {
+-                    m_cssURLs.insert( fullURL, importSheet );
+-                    obtainStyleSheetURLsLower( importSheet, data );
+-                }
+-            }
+-        } break;
+-
+-        default:
+-            kDebug(90110) << " unknown/unsupported rule=" << cr.type();
+-        }
+-    }
+-}
+-
+-
+-void ArchiveDialog::obtainURLsLower(KHTMLPart *part, int level) {
+-    //QString indent;
+-    //indent.fill(' ', level*2);
+-
+-    QString htmlFileName = (level == 0) ? "index.html" : part->url().fileName();
+-
+-    // Add .html extension if not found already.  This works around problems with frames,
+-    // where the frame is for example "framead.php".  The http-io-slave gets the mimetype
+-    // from the webserver, but files in a tar archive do not have such metadata.  The result
+-    // is that Konqueror asks "save 'adframe.php' to file?" without this measure.
+-    htmlFileName = appendMimeTypeSuffix(htmlFileName, "text/html");
+-
+-    // If level == 0, the m_tarName2part map is empty and so uniqTarName will return "index.html" unchanged.
+-    uniqTarName( htmlFileName, part );
+-
+-    assert( m_framesInPart.find(part) == m_framesInPart.end() );
+-    FramesInPart::Iterator fip_it = m_framesInPart.insert( part, PartFrameData() );
+-
+-    RecurseData data(part, 0, &(fip_it.value()));
+-    data.document.documentElement();
+-    obtainPartURLsLower(data.document.documentElement(), 1, data);
+-    {   // Limit lifetime of @c childParts
+-        ROPartList childParts( part->frames() );
+-        FOR_ITER(ROPartList, childParts, child_it) {
+-            KHTMLPart *cp = qobject_cast<KHTMLPart *>(*child_it);
+-            if (cp) {
+-                obtainURLsLower(cp, level+1);
+-            }
+-        }
+-    }
+-
+-    DOM::StyleSheetList styleSheetList = data.document.styleSheets();
+-    //kDebug(90110) << "# of stylesheets=" << styleSheetList.length();
+-    for (int i=0; i != static_cast<int>(styleSheetList.length()); ++i) {
+-        DOM::StyleSheet ss = styleSheetList.item(i);
+-        if ( ss.isCSSStyleSheet() ) {
+-            DOM::CSSStyleSheet &css = static_cast<DOM::CSSStyleSheet &>(ss);
+-
+-            QString href = css.href().string();
+-            if (! href.isNull()) {
+-                QString href  = css.href().string();
+-                KUrl fullUrl  = css.baseUrl();
+-                kDebug(90110) << "top-level stylesheet='" << href;
+-                bool inserted = insertTranslateURL( fullUrl, data);
+-                if ( inserted )
+-                    m_cssURLs.insert( fullUrl, css );
+-            } else {
+-                DOM::Node node = css.ownerNode();
+-                if (! node.isNull()) {
+-                    assert(! m_topStyleSheets.contains(node));
+-                    kDebug(90110) << "top-level inline stylesheet '" << node.nodeName();
+-                    // TODO I think there can be more than one <style> area...
+-                    assert(href.isNull());
+-                    m_topStyleSheets.insert(node, css);
+-
+-                } else {
+-                    kDebug(90110) << "found loose style sheet '" << node.nodeName();
+-                    assert(0); // FIXME for testing only
+-                }
+-            }
+-            obtainStyleSheetURLsLower( css, data );
+-        }
+-    }
+-}
+-
+-
+-void ArchiveDialog::obtainPartURLsLower(const DOM::Node &pNode, int level, RecurseData &data) {
+-    const QString nodeName = pNode.nodeName().string().toUpper();
+-
+-    QString indent;
+-    indent.fill(' ', level*2);
+-
+-    if ( !pNode.isNull() && (pNode.nodeType() == DOM::Node::ELEMENT_NODE) ) {
+-        const DOM::Element &element = static_cast<const DOM::Element &>(pNode);
+-
+-        if ( const_cast<DOM::Element &>(element).hasAttribute( "STYLE" ) ) {
+-            RawHRef2FullURL &raw2full = m_URLsInStyleElement.insert(element, RawHRef2FullURL()).value();
+-            parseStyleDeclaration( data.part->url(), const_cast<DOM::Element &>(element).style(),
+-                                   raw2full, data );
+-        }
+-
+-        if ( nodeName == "BASE" )
+-            data.baseSeen = true;
+-
+-        ExtractURLs eurls(nodeName, element);
+-        const AttrList::iterator invalid = eurls.attrList.end();
+-
+-        if (eurls.frameName != invalid) {
+-
+-            // If a frame tag has a name tag, the src attribute will be overwritten
+-            // This ensures the current selected frame is saved and not the default
+-            // frame given by the original 'src' attribute
+-            data.partFrameData->framesWithName.insert((*eurls.frameName).value, 0);
+-
+-        } else if (eurls.frameURL != invalid) {
+-
+-            // URL has no 'name' attribute.  This frame cannot(?) change, so 'src' should
+-            // identify it unambigously
+-            KUrl _frameURL = absoluteURL((*eurls.frameURL).value, data );
+-            if (!urlCheckFailed(data.part, _frameURL))
+-                data.partFrameData->framesWithURLOnly.insert(_frameURL.url(), 0);
+-
+-        } else {
+-            // Ignore empty frame tags
+-        }
+-
+-        if (eurls.transURL != invalid) {
+-            // Kills insecure/invalid links. Frames are treated separately.
+-            insertTranslateURL(absoluteURL(parseURL((*eurls.transURL).value), data), data);
+-        }
+-
+-        // StyleSheet-URLs are compared against the internal stylesheets data structures
+-        // Treatment is similiar to frames
+-    }
+-
+-    if (! pNode.isNull()) {
+-        DOM::Node child = pNode.firstChild();
+-        while (! child.isNull()) {
+-            obtainPartURLsLower(child, level+1, data);
+-            child = child.nextSibling();
+-        }
+-    }
++   enableButtonOk(true);
++   setEscapeButton(Ok);
++   enableButtonCancel(false);
+ }
+ 
++/* Recursively travers the DOM-Tree */
+ 
++void ArchiveDialog::saveToArchive(QTextStream* _textStream)
++{
++   if (!_textStream) return;
+ 
++   // Add a doctype
+ 
+-// Kill insecure/invalid links. Frames are treated separately.
++   (*_textStream) <<"<!-- saved from:" << endl << m_url.url() << " -->" << endl;
+ 
+-bool ArchiveDialog::insertTranslateURL( const KUrl &fullURL, RecurseData &data ) {
+-    if ( !urlCheckFailed(data.part, fullURL) ) {
+-//         kDebug(90110) << "adding '" << fullURL << "' to to-be-downloaded URLs";
+-        m_url2tar.insert( fullURL, DownloadInfo( QString::null, data.part ) );
+-        return true;
+-    } else {
+-        kDebug(90110) << "URL check failed on '" << fullURL.prettyUrl() << "' -- skipping";
+-        return false;
+-    }
++   try
++   {
++      saveArchiveRecursive(m_document.documentElement(), m_url, _textStream, 0);
++   }
++   catch (...)
++   {
++      kDebug(90110) << "exception";
++   }
+ }
+ 
+-bool ArchiveDialog::insertHRefFromStyleSheet( const QString &hrefRaw, RawHRef2FullURL &raw2full,
+-    const KUrl &fullURL, RecurseData &data )
++static bool hasAttribute(const DOM::Node &pNode, const QString &attrName, const QString &attrValue)
+ {
+-    bool inserted = insertTranslateURL( fullURL, data );
+-
+-#if 0
+-    if ( inserted ) {
+-        kDebug(90110) << "stylesheet: found url='"
+-                       << fullURL.prettyUrl() << "' hrefRaw='" << hrefRaw;
+-    } else {
+-        kDebug(90110) << "stylesheet: killing insecure/invalid url='"
+-                       << fullURL.prettyUrl() << "' hrefRaw='" << hrefRaw;
+-    }
+-#endif
+-
+-    raw2full.insert( hrefRaw, inserted ? fullURL : KUrl() );
+-    return inserted;
++   const DOM::Element element = (const DOM::Element) pNode;
++   DOM::Attr attr;
++   DOM::NamedNodeMap attrs = element.attributes();
++   unsigned long lmap = attrs.length();
++   for( unsigned int j=0; j<lmap; j++ ) {
++      attr = static_cast<DOM::Attr>(attrs.item(j));
++      if ((attr.name().string().toUpper() == attrName) &&
++          (attr.value().string().toUpper() == attrValue))
++         return true;
++   }
++   return false;
+ }
+ 
+-void ArchiveDialog::parseStyleDeclaration(const KUrl &baseURL, DOM::CSSStyleDeclaration decl,
+-    RawHRef2FullURL &raw2full, RecurseData &data /*, bool verbose*/)
++static bool hasChildNode(const DOM::Node &pNode, const QString &nodeName)
+ {
+-    for (int k=0; k != static_cast<int>(decl.length()); ++k) {
+-        DOM::DOMString item  = decl.item(k);
+-        DOM::DOMString val   = decl.getPropertyValue(item);
+-        //DOM::CSSValue  csval = decl.getPropertyCSSValue(item);
+-
+-//         kDebug(90110) << "style declaration " << item << ":" << val << ";";
+-
+-        QString href = extractCSSURL( val.string() );
+-        if ( href != QString::null ) {
+-
+-//             kDebug(90110) << "URL in CSS " << item << ":" << val << ";";
+-
+-            // TODO Would like to use khtml::parseURL to remove \r, \n and similiar
+-            QString parsedURL = parseURL(href);
+-
+-//             kDebug(90110) << "found URL='" << val << "' extracted='" << parsedURL << "'";
+-            insertHRefFromStyleSheet( href, raw2full, KUrl( baseURL, parsedURL ), data );
+-        }
+-    }
+-}
+-
+-
+-
+-
+-
+-
+-
+-/* Saves all frames, starting from top */
+-
+-bool ArchiveDialog::saveTopFrame() {
+-    m_part2tarName.clear();
+-
+-    FOR_ITER(TarName2Part, m_tarName2part, t2p_it) {
+-        if ( t2p_it.value() != 0 )
+-            m_part2tarName.insert( t2p_it.value(), t2p_it.key() );
+-    }
+-
+-    return saveFrame(m_top, 0);
+-}
+-
+-
+-bool ArchiveDialog::saveFrame(KHTMLPart *part, int level) {
+-
+-    // Rebuild HTML file from 'part' and write to tar archive
++   DOM::Node child;
++   try
++   {
++     // We might throw a DOM exception
++     child = pNode.firstChild();
++   }
++   catch (...)
++   {
++     // No children, stop recursion here
++     child = DOM::Node();
++   }
+ 
+-    QByteArray rawtext;
+-    {
+-        FramesInPart::Iterator fip_it = m_framesInPart.find(part);
+-        assert( fip_it != m_framesInPart.end() );
+-        PartFrameData *pfd = &(fip_it.value());
+-
+-        //
+-        // Overloading madness: Note the @c &rawtext : If you accidently write @c rawtext
+-        // it still compiles but it uses a different ctor that does not write to @c rawtext
+-        // but initializes @c textStream with @c rawtext
+-        //
+-        QTextStream textStream( &rawtext, QIODevice::WriteOnly );
+-        textStream.setCodec( QTextCodec::codecForMib( 106 ));    // 106 == UTF-8
+-        RecurseData data(part, &textStream, pfd);
+-        saveHTMLPart(data);
+-    } // @c textStream destroyed and flushed
+-
+-    Part2TarName::Iterator p2tn_it = m_part2tarName.find( part );
+-    assert( p2tn_it != m_part2tarName.end() );
+-    const QString &tarName = p2tn_it.value();
+-
+-    kDebug(90110) << "writing part='" << part->url().prettyUrl() << "' to tarfile='" << tarName
+-                  << "' size=" << rawtext.size();
+-    bool error = ! m_tarBall->writeFile(tarName, QString::null, QString::null, rawtext.data(), rawtext.size(),
+-                                        archivePerms, m_archiveTime, m_archiveTime, m_archiveTime);
+-    if (error) {
++   while(!child.isNull()) {
++     if (child.nodeName().string().toUpper() == nodeName)
+         return true;
+-    }
+-
+-
+-    // Recursively handle all frames / subparts
+-    {   // Limit lifetime of @c childParts
+-        ROPartList childParts( part->frames() );
+-        FOR_ITER(ROPartList, childParts, child_it) {
+-            KHTMLPart *cp = qobject_cast<KHTMLPart *>(*child_it);
+-            if (cp) {
+-                error = saveFrame(cp, level+1);
+-                if (error) {
+-                    return true;
+-                }
+-            }
+-        }
+-    }
+-
+-    return false;
+-}
+-
+-
+-// Saves the frame given in @c data.part
+-
+-void ArchiveDialog::saveHTMLPart(RecurseData &data)
+-{
+-    QTextStream &textStream(*data.textStream);
+-    // Add a doctype
+-    DOM::DocumentType t( data.document.doctype() );
+-    if (! t.isNull()) {
+-        DOM::DOMString name( t.name() );
+-        DOM::DOMString publicId( t.publicId() );
+-
+-        if (!name.isEmpty() && !publicId.isEmpty()) {
+-            textStream << "<!DOCTYPE " << name.string() << " PUBLIC \"" << publicId.string() << "\"";
+-            DOM::DOMString systemId( t.systemId() );
+-            if (!systemId.isEmpty())
+-                textStream << " \"" << systemId.string() << "\"";
+-            textStream << ">\n";
+-        }
+-    }
+-
+-    textStream << "<!-- saved from: " << data.part->url().prettyUrl() << " -->\n";
+-
+-    try {
+-        saveHTMLPartLower(data.document.documentElement(), 1, data);
+-    } catch (...) {
+-        kDebug(90110) << "exception";
+-        Q_ASSERT(0);
+-    }
++     child = child.nextSibling();
++   }
++   return false;
+ }
+ 
++/* Transform DOM-Tree to HTML */
+ 
+-void ArchiveDialog::saveHTMLPartLower(const DOM::Node &pNode, int level, RecurseData &data)
++void ArchiveDialog::saveArchiveRecursive(const DOM::Node &pNode, const KUrl& baseURL,
++					     QTextStream* _textStream, int indent)
+ {
+-    const QString nodeName(pNode.nodeName().string().toUpper());
+-
+-    //QString indent;
+-    //indent.fill(' ', level*2);
++   const QString nodeNameOrig(pNode.nodeName().string());
++   const QString nodeName(pNode.nodeName().string().toUpper());
++   QString text;
++   QString strIndent;
++   strIndent.fill(' ', indent);
++   const DOM::Element element = (const DOM::Element) pNode;
++   DOM::Node child;
++
++   if ( !element.isNull() ) {
++      if (nodeName.at(0)=='-') {
++        /* Don't save khtml internal tags '-konq..'
++         * Approximating it with <DIV>
++         */
++        text += "<DIV> <!-- -KONQ_BLOCK -->";
++      } else if (nodeName == "BASE") {
++        /* Skip BASE, everything is relative to index.html
++         * Saving SCRIPT but they can cause trouble!
++         */
++      } else if ((nodeName == "META") && hasAttribute(pNode, "HTTP-EQUIV", "CONTENT-TYPE")) {
++        /* Skip content-type meta tag, we provide our own.
++         */
++      } else {
++        if (!m_bPreserveWS) {
++          if (nodeName == "PRE") {
++            m_bPreserveWS = true;
++          }
++          text = strIndent;
++        }
++        text += "<" + nodeNameOrig;
++        QString attributes;
++        QString attrNameOrig, attrName, attrValue;
++        DOM::Attr attr;
++        DOM::NamedNodeMap attrs = element.attributes();
++        unsigned long lmap = attrs.length();
++        for( unsigned int j=0; j<lmap; j++ ) {
++           attr = static_cast<DOM::Attr>(attrs.item(j));
++           attrNameOrig = attr.name().string();
++           attrName = attrNameOrig.toUpper();
++           attrValue = attr.value().string();
+ 
+-    bool skipElement   = false;
+-    bool fullEmptyTags = false;
+-    bool hasChildren   = const_cast<DOM::Node &>(pNode).hasChildNodes();
+-    QString text = "";
+-
+-    bool isElement = !pNode.isNull() && (pNode.nodeType() == DOM::Node::ELEMENT_NODE);
+-
+-    //kDebug(90110) << indent << "nodeName=" << nodeName << " toString()='" << pNode.toString() << "'";
+-    if ( isElement ) {
+-        const DOM::Element &element = static_cast<const DOM::Element &>(pNode);
+-        URLsInStyleElement::Iterator style_it = m_URLsInStyleElement.find( element );
+-        bool hasStyle = ( style_it != m_URLsInStyleElement.end() );
+-
+-        if ((nodeName == "META") && hasAttrWithValue(element, "HTTP-EQUIV", "CONTENT-TYPE")) {
+-            // Skip content-type meta tag, we provide our own.
+-            skipElement = true;
+-        } else if ((nodeName == "NOFRAMES") && !hasChildren) {
+-            skipElement = true;
+-        } else {
++#if 0
++        if ((nodeName == "FRAME" || nodeName == "IFRAME") && attrName == "SRC") {
++          //attrValue = handleLink(baseURL, attrValue);
+ 
+-            // translate URLs of stylesheets, jscript, images ...
++          /* Going recursively down creating a DOM-Tree for the Frame, second Level of recursion */
++          //## Add Termination criteria, on the other hand frames are not indefinetly nested, are they :)
+ 
+-            ExtractURLs eurls(nodeName, element);
++          KHTMLPart* part = new KHTMLPart();
++          KUrl absoluteURL = getAbsoluteURL(baseURL, attrValue);
++          part->openUrl(absoluteURL);
++          saveFile(getUniqueFileName(absoluteURL.fileName()), part);
++          delete part;
+ 
+-            AttrList::Iterator filterOut1 = eurls.attrList.end();
+-            AttrList::Iterator filterOut2 = eurls.attrList.end();
+-            const AttrList::Iterator invalid = eurls.attrList.end();
+-
+-
+-            // make URLs in hyperref links absolute
+-            if (eurls.absURL != invalid) {
+-                KUrl baseurl = absoluteURL( "", data );
+-                KUrl newurl = KUrl(baseurl, parseURL((*eurls.absURL).value));
+-                if (urlCheckFailed(data.part, newurl)) {
+-                    (*eurls.absURL).value = "";
+-                    kDebug(90110) << "removing invalid/insecure href='" << newurl.prettyUrl() << "'";
+-                } else {
+-                    //
+-                    // KUrl::htmlRef() calls internally fragment()->toPercent()->toLatin1()->fromLatin1()->fromPercent()
+-                    // This is slow of course and there would be only a difference if there is some suburl.
+-                    // Since we discard any urls with suburls for security reasons QUrl::fragment() is sufficient.
+-                    //
+-                    assert(! newurl.hasSubUrl());   // @see urlCheckFailed()
+-                    if (newurl.hasFragment() && baseurl.equals(newurl, KUrl::CompareWithoutFragment)) {
+-                        (*eurls.absURL).value = QString("#") + newurl.fragment();
+-                    } else {
+-                        (*eurls.absURL).value = newurl.url();
+-                    }
+-                }
+-            }
+-
+-            // make URLs of embedded objects local to tarfile
+-            if (eurls.transURL != invalid) {
+-                // NOTE This is a bit inefficient, because the URL is computed twice, here and when obtaining all
+-                // URLs first. However it is necessary, because two URLs that look different in the HTML frames (for
+-                // example absolute and relative) may resolve to the same absolute URL
+-                KUrl fullURL = absoluteURL( parseURL((*eurls.transURL).value), data );
+-                UrlTarMap::Iterator it = m_url2tar.find(fullURL);
+-                if (it == m_url2tar.end()) {
+-
+-                    (*eurls.transURL).value = "";
+-                    kDebug(90110) << "removing invalid/insecure link='" << fullURL.prettyUrl() << "'";
+-
+-                } else {
+-//                     assert( !it.value().tarName.isNull() );
+-                    (*eurls.transURL).value = it.value().tarName;
+-                }
+-            }
+-
+-            // Check stylesheet <link>s
+-            if (eurls.cssURL != invalid) {
+-
+-                KUrl fullURL = absoluteURL( (*eurls.cssURL).value, data );
+-                UrlTarMap::Iterator it = m_url2tar.find(fullURL);
+-
+-                if ( it == m_url2tar.end() ) {
+-
+-                    kDebug(90110) << "removing invalid/insecure CSS link='" << fullURL.prettyUrl() << "'";
+-                    (*eurls.cssURL).value = "";
+-
+-                } else {
+-//                     assert( !it.value().tarName.isNull() );
+-                    (*eurls.cssURL).value = it.value().tarName;
+-                }
+-            }
+-
+-            // Check for a frame with a name
+-            if (eurls.frameName != invalid) {
+-                Name2Part &n2f = data.partFrameData->framesWithName;
+-                Name2Part::Iterator n2f_part = n2f.find((*eurls.frameName).value);
+-
+-                if (n2f_part == n2f.end()) {
+-
+-                    // KHTML ignores this frame tag, so remove it here
+-                    filterOut1 = eurls.frameName;
+-                    filterOut2 = eurls.frameURL;
+-
+-                    kDebug(90110) << "emptying frame=" << (*eurls.frameName).value;
+-
+-                } else {
+-
+-                    // Always add a 'src' attribute.  If it's not there, add one
+-                    if (eurls.frameURL == invalid) {
+-                        eurls.attrList.prepend(AttrElem(QString("src"), QString::null));
+-                        eurls.frameURL = eurls.attrList.begin();
+-
+-                        // NOTE Now that we changed the list, pray the older iterators of 'attrList' still work...
+-                    }
+-                    Part2TarName::Iterator p2tn_it = m_part2tarName.find( n2f_part.value() );
+-                    Q_ASSERT( p2tn_it != m_part2tarName.end() );
+-                    (*eurls.frameURL).value = p2tn_it.value();
+-
+-                    kDebug(90110) << "setting frame='" << (*eurls.frameName).value << "' to src='"
+-                                  << (*eurls.frameURL).value;
+-                }
+-
+-            } else if (eurls.frameURL != invalid) {
+-
+-                URL2Part &u2f = data.partFrameData->framesWithURLOnly;
+-                KUrl fullURL = absoluteURL( (*eurls.frameURL).value, data );
+-                URL2Part::Iterator u2f_part = u2f.find( fullURL );
+-
+-                if (u2f_part == u2f.end()) {
+-
+-                    // KHTML ignores this frame tag, so remove it here
+-                    filterOut1 = eurls.frameURL;
+-
+-                    kDebug(90110) << "emptying frame='" << (*eurls.frameURL).value << "'";
+-
+-                } else {
+-
+-                    Part2TarName::Iterator p2tn_it = m_part2tarName.find( u2f_part.value() );
+-                    Q_ASSERT( p2tn_it != m_part2tarName.end() );
+-                    (*eurls.frameURL).value = p2tn_it.value();
+-
+-                    kDebug(90110) << "setting frame='" << fullURL.prettyUrl() << "' to src='"
+-                                  <<  (*eurls.frameURL).value;
+-                }
+-            }
+-
+-
+-            // Remove <base href=... > attribute
+-            if (nodeName == "BASE") {
+-                filterOut1 = getAttribute( eurls.attrList, "href" );
+-                data.baseSeen = true;
+-            }
+-
+-
+-            // Insert <head> tag if not found
+-            if (nodeName == "HTML") {
+-                if (!hasChildNode(pNode, "HEAD"))
+-                    text += "<head>" CONTENT_TYPE "</head>\n";
+-                fullEmptyTags = true;
+-                // Always write out full closing tags for some tags
+-            } else if (nodeName == "HEAD" || nodeName == "FRAME" || nodeName == "IFRAME" || nodeName == "A" ||
+-                       nodeName == "DIV" || nodeName == "SPAN")
+-            {
+-                fullEmptyTags = true;
+-            }
+-
+-            text += "<" + nodeName.toLower();
+-
+-            // Write attributes
+-            for (AttrList::ConstIterator i = eurls.attrList.begin(); i != eurls.attrList.end(); ++i) {
+-                QString attr  = (*i).name.toLower();
+-                QString value = (*i).value;
+-                if ((i != filterOut1) && (i != filterOut2)) {
+-                    if (hasStyle && (attr == "style")) {
+-//                         kDebug(90110) << "translating URLs in element:";
+-//                         kDebug(90110) << "value=" << value;
+-                        changeCSSURLs( value, style_it.value() );
+-//                         kDebug(90110) << "value=" << value;
+-                    }
+-                    if (non_cdata_attr.find(attr) == non_cdata_attr.end()) {
+-                        value = escapeHTML(value);
+-                    }
+-                    text += " " + attr + "=\"" + value + "\"";
+-                }
+-            }
+-
+-            // Take care for self-contained tags like <hr />.  This code is needed to close such
+-            // tags later with '/>'. 'fullEmptyTags == true' means to always write an explicit
+-            // closing tag, e.g. <script></script>
+-            if (fullEmptyTags || hasChildren)
+-                text += ">";
+-
+-            if (nodeName == "HEAD") {
+-                text += CONTENT_TYPE "\n";
+-            }
++        } else if
++#endif
++           if ((nodeName == "LINK" && attrName == "HREF") || // Down load stylesheets, js-script, ..
++             ((nodeName == "FRAME" || nodeName == "IFRAME") && attrName == "SRC") ||
++             ((nodeName == "IMG" || nodeName == "INPUT" || nodeName == "SCRIPT") && attrName == "SRC") ||
++             ((nodeName == "BODY" || nodeName == "TABLE" || nodeName == "TH" || nodeName == "TD") && attrName == "BACKGROUND")) {
++           // Some people use carriage return in file names and browsers support that!
++              attrValue = handleLink(baseURL, attrValue.replace(QRegExp("\\s"), ""));
++           }
++        /*
++         * ## Make recursion level configurable
++         */
++        /*
++        } else if (nodeName == "A" && attrName == "HREF") {
++           attrValue = handleLink(baseURL, attrValue);
++        */
++
++           attributes += " " + attrName + "=\"" + attrValue + '"';
++        }
++        if (!(attributes.isEmpty())){
++  	   text += ' ';
++        }
++        text += attributes.simplified();
++        text += '>';
++
++        if (nodeName == "HTML") {
++          /* Search for a HEAD tag, if not found, generate one.
++           */
++          if (!hasChildNode(pNode, "HEAD"))
++            text += '\n' + strIndent + "  <HEAD>" CONTENT_TYPE "</HEAD>";
+         }
+-    } else {
+-        const QString &nodeValue(pNode.nodeValue().string());
+-        if (!(nodeValue.isEmpty())) {
+-            // Don't escape < > in JS or CSS
+-            DOM::Node parentNode = pNode.parentNode();
+-            QString parentNodeName = parentNode.nodeName().string().toUpper();
+-            if (parentNodeName == "STYLE") {
+-                text = pNode.nodeValue().string(); //analyzeInternalCSS(baseURL, pNode.nodeValue().string());
+-
+-                Node2StyleSheet::Iterator topcss_it = m_topStyleSheets.find(parentNode);
+-                if ( topcss_it != m_topStyleSheets.end() ) {
+-                    URLsInStyleSheet::ConstIterator uss_it = m_URLsInStyleSheet.find( *topcss_it );
+-                    m_topStyleSheets.erase(topcss_it);  // for safety
+-                    assert( uss_it != m_URLsInStyleSheet.end() );
+-
+-                    kDebug(90110) << "translating URLs in <style> area.";
+-                    changeCSSURLs(text, uss_it.value() );
+-
+-                } else {
+-                    kDebug(90110) << "found style area '" << nodeName << "', but KHMTL didn't feel like parsing it";
+-                }
+-
+-            } else if (parentNodeName == "SCRIPT") {
+-                text = pNode.nodeValue().string();
+-            } else {
+-                if (pNode.nodeType() == DOM::Node::COMMENT_NODE) {
+-                    text = "<!--";
+-                    text += Qt::escape(nodeValue);  // No need to escape " as well
+-                    text += "-->";
+-                } else {
+-                    text = escapeHTML(nodeValue);
+-                }
+-            }
++        else if (nodeName == "HEAD") {
++          text += '\n' + strIndent + "  " + CONTENT_TYPE;
+         }
+-    }
+-
++     }
++   } else {
++     const QString& nodeValue(pNode.nodeValue().string());
++     if (!(nodeValue.isEmpty())) {
++     // Don't escape < > in JS or CSS
++       QString parentNodeName = pNode.parentNode().nodeName().string().toUpper();
++       if (parentNodeName == "STYLE") {
++          text = analyzeInternalCSS(baseURL, pNode.nodeValue().string());
++       } else if (m_bPreserveWS) {
++          text = Qt::escape(pNode.nodeValue().string());
++       } else if (parentNodeName == "SCRIPT") {
++          text = pNode.nodeValue().string();
++       } else {
++          text = strIndent + Qt::escape(pNode.nodeValue().string());
++       }
++     }
++   }
+ 
+-    (*data.textStream) << text;
++#ifdef DEBUG_WAR
++   kDebug(90110) << "text:" << text;
++#endif
++   if (!(text.isEmpty())) {
++     (*_textStream) << text;
++     if (!m_bPreserveWS) {
++       (*_textStream) << endl;
++     }
++   }
+ 
++   try
++   {
++     // We might throw a DOM exception
++     child = pNode.firstChild();
++   }
++   catch (...)
++   {
++     // No children, stop recursion here
++     child = DOM::Node();
++   }
+ 
+-    if (! pNode.isNull()) {
+-        DOM::Node child = pNode.firstChild();
+-        while (! child.isNull()) {
+-            saveHTMLPartLower(child, level+1, data);
+-            child = child.nextSibling();
+-        }
+-    }
++   while(!child.isNull()) {
++     saveArchiveRecursive(child, baseURL, _textStream, indent+2);
++     child = child.nextSibling();
++   }
+ 
+-    if (isElement && !skipElement) {
+-        if (fullEmptyTags || hasChildren) {
+-            text = "</" + nodeName.toLower() + ">";
++   if (!(element.isNull())) {
++     if (nodeName == "AREA" || nodeName == "BASE" || nodeName == "BASEFONT" ||
++	nodeName == "BR" || nodeName == "COL" || nodeName == "FRAME" ||
++	nodeName == "HR" || nodeName == "IMG" || nodeName == "INPUT" ||
++	nodeName == "ISINDEX" || nodeName == "META" || nodeName == "PARAM") {
++
++      /* Closing Tag is forbidden, see HTML 4.01 Specs: Index of Elements  */
++
++     } else {
++        if (!m_bPreserveWS) {
++           text = strIndent;
+         } else {
+-            text = " />"; // close self-contained tags
++           text ="";
+         }
+-        (*data.textStream) << text;
+-    }
+-}
+-
+-
+-
+-
+-
+-QString ArchiveDialog::extractCSSURL(const QString &text) {
+-    if (text.startsWith("url(") && text.endsWith(")")) {
+-        return text.mid( 4, text.length() - 5 );
+-    } else {
+-        return QString::null;
+-    }
+-}
+-
+-
+-QString &ArchiveDialog::changeCSSURLs(QString &text, const RawHRef2FullURL &raw2full) {
+-    FOR_CONST_ITER(RawHRef2FullURL, raw2full, r2f_it) {
+-        const QString &raw  = r2f_it.key();
+-        const KUrl &fullURL = r2f_it.value();
+-        if (fullURL.isValid()) {
+-            UrlTarMap::Iterator utm_it = m_url2tar.find(fullURL);
+-            if (utm_it != m_url2tar.end() ) {
+-                const QString &tarName = utm_it.value().tarName;
+-//                 assert(! tarName.isNull());
+-
+-                kDebug(90110) << "changeCSSURLs: url=" << raw << " -> " << tarName;
+-                text.replace( raw, tarName );
+-            } else {
+-                kDebug(90110) << "changeCSSURLs: raw URL not found in tar map";
+-                text.replace( raw, "" );
+-            }
++        if (nodeName.at(0)=='-') {
++           text += "</DIV> <!-- -KONQ_BLOCK -->";
+         } else {
+-            kDebug(90110) << "changeCSSURLs: emptying invalid raw URL";
+-            text.replace( raw, "" );
++	   text += "</" + pNode.nodeName().string() + '>';
++	   if (nodeName == "PRE") {
++	      m_bPreserveWS = false;
++           }
++        }
++#ifdef DEBUG_WAR
++        kDebug(90110) << text;
++#endif
++        if (!(text.isEmpty())) {
++           (*_textStream) << text;
++	   if (!m_bPreserveWS) {
++	      (*_textStream) << endl;
++	   }
+         }
+-    }
+-    return text;
+-}
+-
+-
+-
+-
+-
+-
+-
+-ArchiveDialog::ExtractURLs::ExtractURLs(const QString &nodeName, const DOM::Element &element) {
+-
+-    DOM::NamedNodeMap attrs = element.attributes();
+-    int lmap = static_cast<int>(attrs.length());    // More than 2^31 attributes? hardly...
+-    for (int j = 0; j != lmap; ++j) {
+-        DOM::Attr attr = static_cast<DOM::Attr>(attrs.item(j));
+-        attrList.append( AttrElem(attr.name().string(), attr.value().string()) );
+-    }
+-
+-    AttrList::Iterator rel        = attrList.end();
+-    AttrList::Iterator href       = attrList.end();
+-    AttrList::Iterator src        = attrList.end();
+-    AttrList::Iterator name       = attrList.end();
+-    AttrList::Iterator background = attrList.end();
+-    AttrList::Iterator invalid    = attrList.end();
+-    for (AttrList::Iterator i = attrList.begin(); i != attrList.end(); ++i) {
+-        QString attrName  = (*i).name.toUpper();
+-        if (attrName == "REL")
+-            rel = i;
+-        else if (attrName == "HREF")
+-            href = i;
+-        else if (attrName == "BACKGROUND")
+-            background = i;
+-        else if (attrName == "SRC")
+-            src = i;
+-        else if (attrName == "NAME")
+-            name = i;
+-    }
+-
+-    //
+-    // Check attributes
+-    //
+-    transURL  =
+-    absURL    =
+-    frameURL  =
+-    frameName =
+-    cssURL    = attrList.end();
+-    if ((nodeName == "A") && (href != invalid)) {
+-        absURL = href;
+-    } else if ((nodeName == "LINK") && (rel != invalid) && (href != invalid)) {
+-        QString relUp = (*rel).value.toUpper();
+-        if (relUp == "STYLESHEET") {
+-            cssURL = href;
+-        } else if (relUp == "SHORTCUT ICON") {
+-            transURL = href;
+-        } else {
+-            absURL = href;
+      }
+-    } else if (nodeName == "FRAME" || nodeName == "IFRAME") {
+-        if (src != invalid)
+-            frameURL = src;
+-        if (name != invalid)
+-            frameName = name;
+-    } else if ( (nodeName == "IMG" || nodeName == "INPUT" || nodeName == "SCRIPT") && (src != invalid) ) {
+-        transURL = src;
+-    } else if ( (nodeName == "BODY" || nodeName == "TABLE" || nodeName == "TH" || nodeName == "TD") &&
+-                (background != invalid))
+-    {
+-        kDebug() << "found background URL " << (*background).value;
+-        transURL = background;
+-    }
++   }
+ }
+ 
++/* Extract the URL, download it's content and return an unique name for the link */
+ 
+-bool ArchiveDialog::hasAttrWithValue(const DOM::Element &elem, const QString &attrName, const QString &attrValue)
++QString ArchiveDialog::handleLink(const KUrl& _url, const QString& _link)
+ {
+-    DOM::Attr attr = const_cast<DOM::Element &>(elem).getAttributeNode( attrName );
++   KUrl url(getAbsoluteURL(_url, _link));
++   QString tarFileName;
+ 
+-    if ( !attr.isNull() ) {
+-        return attr.value().string().toUpper() == attrValue;
+-    } else
+-        return false;
+-}
++   if (m_state==Retrieving)
++      m_urlsToDownload.append(url);
++   else if (m_state==Saving)
++      tarFileName = m_downloadedURLDict[url.url()];
+ 
++   return tarFileName;
++}
+ 
+-bool ArchiveDialog::hasChildNode(const DOM::Node &pNode, const QString &nodeName)
++void ArchiveDialog::downloadNext()
+ {
+-    DOM::Node child;
+-    try {
+-        // We might throw a DOM exception
+-        child = pNode.firstChild();
+-    } catch (...) {
+-        // No children, stop recursion here
+-        child = DOM::Node();
++   if (m_iterator>=m_urlsToDownload.count())
++   {
++      // We've already downloaded all the files we wanted, let's save them
++      setSavingState();
++      return;
+    }
+ 
+-    while(!child.isNull()) {
+-        if (child.nodeName().string().toUpper() == nodeName)
+-            return true;
+-        child = child.nextSibling();
+-    }
+-    return false;
+-}
++   KUrl url=m_urlsToDownload[m_iterator];
+ 
++#ifdef DEBUG_WAR
++   kDebug(90110) << "URL : " << url.url();
++#endif
++   QString tarFileName;
+ 
+-ArchiveDialog::AttrList::Iterator ArchiveDialog::getAttribute(AttrList &attrList, const QString &attr) {
+-    FOR_ITER(AttrList, attrList, it) {
+-        if ( (*it).name == attr )
+-            return it;
++  // Only download file once
++   if (m_downloadedURLDict.contains(url.url())) {
++      tarFileName = m_downloadedURLDict[url.url()];
++#ifdef DEBUG_WAR
++      kDebug(90110) << "File already downloaded: " << url.url()
++		<< m_downloadedURLDict.count() << endl;
++#endif
++      m_iterator++;
++      downloadNext();
++      return;
++   } else {
++
++      // Gets the name of a temporary file into m_tmpFileName
++      delete m_tmpFile;
++      m_tmpFile=new KTemporaryFile();
++      m_tmpFile->open();
++      kDebug(90110) << "downloading: " << url.url() <<  " to: " << m_tmpFile->fileName();
++      KUrl dsturl;
++      dsturl.setPath(m_tmpFile->fileName());
++      KIO::Job *job=KIO::file_copy(url, dsturl, -1, KIO::Overwrite | KIO::HideProgressInfo);
++      job->addMetaData("cache", "cache"); // Use entry from cache if available.
++      connect(job, SIGNAL(result( KJob *)), this, SLOT(finishedDownloadingURL( KJob *)) );
++
++      m_currentLVI=new Q3ListViewItem(m_widget->listView, url.prettyUrl());
++      m_widget->listView->insertItem( m_currentLVI );
++      m_currentLVI->setText(1,i18n("Downloading"));
+    }
+-    return attrList.end();
++#ifdef DEBUG_WAR
++   kDebug(90110) << "TarFileName: [" << tarFileName << "]";
++#endif
+ }
+ 
++void ArchiveDialog::finishedDownloadingURL( KJob *job )
++{
++   if ( job->error() )
++   {
++//     QString s=job->errorString();
++     m_currentLVI->setText(1,i18n("Error"));
++   }
++   else
++     m_currentLVI->setText(1,i18n("Ok"));
+ 
++   m_widget->progressBar->setValue(m_widget->progressBar->value()+1);
+ 
+ 
++   KUrl url=m_urlsToDownload[m_iterator];
+ 
++   QString tarFileName = getUniqueFileName(url.fileName());
+ 
++   // Add file to Tar-Ball
++   m_tmpFile->seek(0);
++   m_tarBall->writeFile(tarFileName, QString(), QString(), m_tmpFile->readAll(), m_tmpFile->size());
++   delete m_tmpFile;
++   m_tmpFile=0;
+ 
++   // Add URL to downloaded URLs
+ 
++   m_downloadedURLDict.insert(url.url(), tarFileName);
++   m_linkDict.insert(tarFileName, QString(""));
+ 
+-KUrl ArchiveDialog::absoluteURL( const QString &partURL, RecurseData &data ) {
+-    if ( data.baseSeen ) {
+-        return KUrl( data.document.completeURL( partURL ).string() );
+-    } else {
+-        return KUrl( data.part->url(), partURL );
+-    }
++   m_iterator++;
++   downloadNext();
+ }
+ 
++/* Create an absolute URL for download */
+ 
+-// TODO Should be khtml::parseURL
+-QString ArchiveDialog::parseURL(const QString &rawurl) {
+-    QString result = rawurl;
+-    return result.replace( QRegExp( "[\\x0000-\\x000D]" ), "" );
++KUrl ArchiveDialog::getAbsoluteURL(const KUrl& _url, const QString& _link)
++{
++   // Does all the magic for me
++   return KUrl(_url, _link);
+ }
+ 
++/* Adds an id to a fileName to make it unique relative to the Tar-Ball */
+ 
+-QString ArchiveDialog::uniqTarName(const QString &suggestion, KHTMLPart *part) {
++QString ArchiveDialog::getUniqueFileName(const QString& fileName)
++{
++  // Name clash -> add unique id
++   static int id=2;
++   QString uniqueFileName(fileName);
+ 
+-    QString result = suggestion;
++#ifdef DEBUG_WAR
++   kDebug(90110) << "getUniqueFileName(..): [" << fileName << "]";
++#endif
+ 
+-    // Name clash -> add unique id
+-    while (result.isEmpty() || m_tarName2part.contains(result))
+-        result = QString::number(m_uniqId++) + suggestion;
+-    m_tarName2part.insert( result, part );
++   while (uniqueFileName.isEmpty() || m_linkDict.contains(uniqueFileName))
++      uniqueFileName = QString::number(id++) + fileName;
+ 
+-    return result;
++   return uniqueFileName;
+ }
+ 
+-bool ArchiveDialog::urlCheckFailed(KHTMLPart *part, const KUrl &fullURL) {
+-    if (!fullURL.isValid())
+-        return true;
+-//     kDebug() << fullURL.prettyUrl() << " hasSubURL()=" << fullURL.hasSubUrl();
+-    if (fullURL.hasSubUrl())
+-        return true;
+-
+-    QString prot = fullURL.protocol();
+-    bool protFile = (prot == "file");
+-    if (part->onlyLocalReferences() && !protFile)
+-        return true;
++/* Search for Images in CSS, extract them and adjust CSS */
+ 
+-    bool protHttp = (prot == "http") || (prot == "https");
+-    if (!protFile && !protHttp)
+-        return true;
++QString ArchiveDialog::analyzeInternalCSS(const KUrl& _url, const QString& string)
++{
++#ifdef DEBUG_WAR
++   kDebug ()  << "analyzeInternalCSS";
++#endif
+ 
+-    if (! KAuthorized::authorizeUrlAction("redirect", part->url(), fullURL) ||
+-        ! KAuthorized::authorizeUrlAction("open", part->url(), fullURL))
+-    {
+-        return true;
+-    }
++   QString str(string);
++   int pos = 0;
++   int startUrl = 0;
++   int endUrl = 0;
++   int length = string.length();
++   while (pos < length && pos >= 0) {
++      pos = str.indexOf("url(", pos);
++      if (pos!=-1) {
++         pos += 4; // url(
++
++         if (str[pos]=='"' || str[pos]=='\'') // CSS 'feature'
++	    pos++;
++         startUrl = pos;
++         pos = str.indexOf(")",startUrl);
++         endUrl = pos;
++         if (str[pos-1]=='"' || str[pos-1]=='\'') // CSS 'feature'
++            endUrl--;
++         QString url = str.mid(startUrl, endUrl-startUrl);
+ 
+-    return false;
+-}
++#ifdef DEBUG_WAR
++         kDebug () << "url: " << url;
++#endif
+ 
++         url = handleLink(_url, url);
+ 
+-QString ArchiveDialog::escapeHTML(QString in) {
+-    return Qt::escape(in).replace('"', "&quot;");
+-}
++#ifdef DEBUG_WAR
++         kDebug () << "url: " << url;
++#endif
+ 
+-QString ArchiveDialog::appendMimeTypeSuffix(QString filename, const QString &mimetype) {
+-    KMimeType::Ptr mimeType = KMimeType::mimeType(mimetype, KMimeType::ResolveAliases);
+-    if (mimeType.isNull() || (mimeType == KMimeType::defaultMimeTypePtr())) {
+-        kDebug(90110) << "mimetype" << mimetype << "unknown here, returning unchanged";
+-        return filename;
+-    }
+-    const QStringList &patterns = mimeType->patterns();
+-    FOR_CONST_ITER(QStringList, patterns, pat_it) {
+-        // Lets hope all patterns are '*.xxx'
+-        QString suffix( *pat_it );
+-        int pos = suffix.lastIndexOf('*');
+-        if (pos < 0) {
+-            kDebug(90110) << "Illegal mime pattern '" << suffix << "for" << mimeType;
+-            Q_ASSERT(0);
+-            continue;
+-        }
+-        suffix = suffix.mid(pos + 1);
+-        if (filename.endsWith(suffix, Qt::CaseInsensitive)) {
+-//             kDebug(90110) << filename << "has already good suffix" << suffix;
+-            return filename;    // already has good suffix
+-        }
+-    }
+-    //
+-    // @c filename has no known suffix, append one
+-    //
+-    if (! patterns.isEmpty()) {
+-        QString suffix( *patterns.constBegin() );
+-        suffix.replace('*', QString::null);
+-        filename += suffix;
+-        kDebug(90110) << "appended missing mimetype suffix, returning" << filename;
+-    } else {
+-        kDebug(90110) << "mimetype" << mimetype << " has no pattern list, this is bad";
+-        Q_ASSERT(0);
+-    }
+-    return filename;
++         str = str.replace(startUrl, endUrl-startUrl, url);
++         pos++;
++      }
++   }
++   return str;
+ }
+ 
+ #include "archivedialog.moc"
+--- a/konq-plugins/webarchiver/archivedialog.h
++++ b/konq-plugins/webarchiver/archivedialog.h
+@@ -1,6 +1,5 @@
+ /*
+    Copyright (C) 2003 Antonio Larrosa <larrosa@kde.org>
+-   Copyright (C) 2008 Matthias Grimrath <maps4711@gmx.de>
+ 
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public
+@@ -14,15 +13,13 @@
+ 
+    You should have received a copy of the GNU General Public License
+    along with this program; see the file COPYING.  If not, write to
+-   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+-   Boston, MA 02111-1307, USA.
++   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++   Boston, MA 02110-1301, USA.
+ */
+ 
+ #ifndef _ARCHIVEDIALOG_H_
+ #define _ARCHIVEDIALOG_H_
+ 
+-#include <cassert>
+-
+ #include <dom/dom_core.h>
+ #include <dom/html_document.h>
+ 
+@@ -31,26 +28,29 @@
+ 
+ #include <qstring.h>
+ #include <qmap.h>
+-#include <qhash.h>
++#include <q3valuelist.h>
++//Added by qt3to4:
++#include <QTextStream>
++#include <QList>
+ #include "ui_archiveviewbase.h"
+ 
+ class QWidget;
+ class KHTMLPart;
+-class ArchiveViewBase;
+ class KUrl;
+ class KTar;
+ class QTextStream;
++class Q3ListViewItem;
++class KTemporaryFile;
+ 
+ class ArchiveViewBase : public QWidget, public Ui::ArchiveViewBase
+ {
+ public:
+-    ArchiveViewBase( QWidget *parent ) : QWidget( parent ) {
+-        setupUi( this );
+-    }
++  ArchiveViewBase( QWidget *parent ) : QWidget( parent ) {
++    setupUi( this );
++  }
+ };
+ 
+-/// Does all the hard work of downloading, manipulating and storing of
+-/// HTML files and inlined images, stylesheets ...
++
+ class ArchiveDialog : public KDialog
+ {
+    Q_OBJECT
+@@ -60,223 +60,35 @@
+ 
+    void archive();
+ 
++public slots:
++   void finishedDownloadingURL( KJob *job );
++   void setSavingState();
+ protected:
+-    /// Holds attributes that are not #CDATA
+-    class NonCDataAttr : public QSet<QString> {
+-    public:
+-        NonCDataAttr();
+-    };
+-
+-    static NonCDataAttr non_cdata_attr;
+-
+-    KIO::Job *startDownload( const KUrl &url, KHTMLPart *part );
+-
+-private:
+-
+-    // Frame handling
+-
+-    typedef QHash<QString, KHTMLPart *> Name2Part;
+-    typedef QHash<KUrl,    KHTMLPart *> URL2Part;
+-
+-    struct PartFrameData {
+-        Name2Part framesWithName;
+-        URL2Part  framesWithURLOnly;
+-    };
+-
+-    typedef QHash< KHTMLPart *, PartFrameData > FramesInPart;
+-    typedef QHash< QString, KHTMLPart * >       TarName2Part;
+-    typedef QHash< KHTMLPart *, QString >       Part2TarName;
+-
+-
+-    // Stylesheets
+-
+-    typedef QHash< KUrl, DOM::CSSStyleSheet >            CSSURLSet;
+-    typedef QHash< QString, KUrl >                       RawHRef2FullURL;
+-    typedef QHash< DOM::CSSStyleSheet, RawHRef2FullURL > URLsInStyleSheet;
+-    typedef QHash< DOM::Element, RawHRef2FullURL >       URLsInStyleElement;
+-    typedef QHash< DOM::Node, DOM::CSSStyleSheet >       Node2StyleSheet;
+-
+-    // Recursive parsing and processing
+-
+-    /// Databag to hold information that is gathered during recursive traversal of the DOM tree
+-    struct RecurseData {
+-        KHTMLPart *const     part;
+-        QTextStream *const   textStream;
+-        PartFrameData *const partFrameData;
+-        DOM::HTMLDocument    document;
+-        bool                 baseSeen;
+-
+-        RecurseData(KHTMLPart *_part, QTextStream *_textStream, PartFrameData *pfd);
+-    };
+-
+-    struct DownloadInfo {
+-        QString tarName;
+-        KHTMLPart *part;
+-
+-        DownloadInfo(const QString &_tarName = QString::null, KHTMLPart *_part = 0)
+-            : tarName(_tarName), part(_part) { }
+-    };
+-
+-    typedef QMap< KUrl, DownloadInfo >     UrlTarMap;
+-    typedef QList< UrlTarMap::Iterator > DownloadList;
+-
+-    struct AttrElem {
+-        QString name;
+-        QString value;
+-
+-        AttrElem() { }
+-        AttrElem(const QString &_n, const QString &_v) : name(_n), value(_v) { }
+-    };
+-    typedef QLinkedList< AttrElem >  AttrList;
+-
+-    /**
+-     * Looks for URL contained in attributes.
+-     */
+-    struct ExtractURLs {
+-        ExtractURLs(const QString &nodeName, const DOM::Element &element);
+-
+-        AttrList attrList;              /// copy of the attribute of @p element
+-        AttrList::iterator absURL;      /// for links ala &lt;a href= ... &gt;
+-        AttrList::iterator transURL;    /// for embedded objects like &lt;img src=...&gt;, favicons, background-images...
+-        AttrList::iterator frameURL;    /// if @p element contains a frameURL
+-        AttrList::iterator frameName;   /// if it is frame tag with a name element
+-        AttrList::iterator cssURL;      /// for URLs that specify CSS
+-    };
+-
+-private:
+-    void downloadObjects();
+-    void downloadStyleSheets();
+-    void saveWebpages();
+-    void finishedArchiving(bool tarerror);
+-
+-    void endProgressInfo(bool error);
+-
+-    void obtainURLs();
+-    void obtainURLsLower(KHTMLPart *part, int level);
+-    void obtainPartURLsLower(const DOM::Node &pNode, int level, RecurseData &data);
+-    void obtainStyleSheetURLsLower(DOM::CSSStyleSheet styleSheet, RecurseData &data);
+-
+-    bool insertTranslateURL( const KUrl &fullURL, RecurseData &data );
+-    bool insertHRefFromStyleSheet( const QString &hrefRaw, RawHRef2FullURL &raw2full,
+-            const KUrl &fullURL, RecurseData &data );
+-    void parseStyleDeclaration(const KUrl &baseURL, DOM::CSSStyleDeclaration decl,
+-            RawHRef2FullURL &urls, RecurseData &data /*, bool verbose = false*/);
+-
+-
+-    bool saveTopFrame();
+-    bool saveFrame(KHTMLPart *part, int level);
+-    void saveHTMLPart(RecurseData &data);
+-    void saveHTMLPartLower(const DOM::Node &pNode, int indent, RecurseData &data);
+-
+-
+-    QString  extractCSSURL(const QString &text);
+-    QString &changeCSSURLs(QString &text, const RawHRef2FullURL &raw2full);
+-
+-
+-    static bool hasAttrWithValue(const DOM::Element &elem, const QString &attrName, const QString &attrValue);
+-    static bool hasChildNode(const DOM::Node &pNode, const QString &nodeName);
+-    static AttrList::Iterator getAttribute(AttrList &attrList, const QString &attr);
+-
+-
+-
+-
+-    /**
+-     * completes a potentially partial URL in a HTML document (like &lt;img href="...")
+-     * to a fully qualified one.
+-     *
+-     * It uses the URL of the document or the URL given in the &lt;base ...&gt;
+-     * element, depending on if and where a &ltbase ...&gt; appears on the document.
+-     *
+-     * Always use this method to get full URLs from href's or similiar.
+-     *
+-     * Suppose the URL of the webpage is http://host.nowhere/. The head looks like this
+-     * <pre>
+-     * &lt;head&gt;
+-     *   &lt;link rel="stylesheet" href="style1.css" type="text/css" /&gt;
+-     *   &lt;base href="http://some.place/" /&gt;
+-     *   &lt;link rel="stylesheet" href="style2.css" type="text/css" /&gt;
+-     * &lt;/head&gt;
+-     * </pre>
+-     *
+-     * The full URL of "style1.css" is http://host.nowhere/style1.css, whereas
+-     * "style2.css" will become http://some.place/style2.css
+-     *
+-     * @return fully qualified URL of @p partURL relative to the HTML document in @c data.part
+-     */
+-    static KUrl absoluteURL( const QString &partURL, RecurseData &data );
+-
+-    /**
+-     * TODO KDE4 is this in KHTML function available now?
+-     * Functionality taken from khtml/css/csshelper.cpp:parseURL
+-     *
+-     * Filters a href in an element inside the HTML body.  This handles
+-     * quirks in browsers that filter out \\n, \\r in URLs.
+-     */
+-    static QString parseURL(const QString &rawurl);
+-
+-    /**
+-     * Creates unique filenames to be used in the tar archive
+-     */
+-    QString uniqTarName(const QString &suggestion, KHTMLPart *part);
+-
+-    /**
+-     * Taken from khtml/misc/loader.cpp DOCLOAD_SECCHECK
+-     *
+-     * Would be better on the public interface of KHTMLPart (or similiar)
+-     *
+-     * Checks if an embedded link like &lt;img src=&quot;...&quot; should be loaded
+-     */
+-    static bool urlCheckFailed(KHTMLPart *part, const KUrl &fullURL);
+-
+-    /**
+-     * Escapes HTML characters. Does not forget " as @ref Qt::escape() does.
+-     */
+-    QString escapeHTML(QString in);
+-
+-
+-    /**
+-     * Adds a suffix that hints at the mimetypes if such a suffix is not
+-     * present already. If there is no such mimetype in the KDE database
+-     * @p filename is returned unchanged.
+-     * 'filename' -> 'filename.gif'
+-     * 'picture.jpg' -> 'picture.jpg'
+-     *
+-     * NOTE This function is rather slow
+-     */
+-    QString appendMimeTypeSuffix(QString filename, const QString &mimetype);
+-
+-private:
+-    KHTMLPart *      m_top;
+-
+-    FramesInPart     m_framesInPart;
+-
+-    UrlTarMap           m_url2tar;
+-    TarName2Part        m_tarName2part;
+-    Part2TarName        m_part2tarName;
+-    CSSURLSet           m_cssURLs;
+-    URLsInStyleSheet    m_URLsInStyleSheet;
+-    URLsInStyleElement  m_URLsInStyleElement;
+-    Node2StyleSheet     m_topStyleSheets;
+-
+-    KIO::Job *             m_job;
+-    CSSURLSet::Iterator    m_styleSheets_it;
+-    DownloadList           m_objects;
+-    DownloadList::Iterator m_objects_it;
+-    UrlTarMap::Iterator    m_dlurl2tar_it;
+-
+-    int              m_uniqId;
+-    KTar *           m_tarBall;
+-    time_t           m_archiveTime;
+-    QString          m_filename;
+-
+-    ArchiveViewBase *   m_widget;
+-
+-
+-private slots:
+-    void slotObjectFinished(KJob *job);
+-    void slotStyleSheetFinished(KJob *job);
+-    void slotButtonClicked(int button);
++   void saveFile( const QString& fileName);
++   void saveToArchive(QTextStream* _textStream);
++   void saveArchiveRecursive(const DOM::Node &node, const KUrl& baseURL,
++                             QTextStream* _textStream, int ident);
++   QString handleLink(const KUrl& _url, const QString & _link);
++   KUrl getAbsoluteURL(const KUrl& _url, const QString& _link);
++   QString getUniqueFileName(const QString& fileName);
++   QString stringToHTML(const QString& string);
++   QString analyzeInternalCSS(const KUrl& _url, const QString& string);
++   void downloadNext();
++
++   ArchiveViewBase *m_widget;
++   QMap<QString, QString> m_downloadedURLDict;
++   QMap<QString, QString> m_linkDict;
++   KTar* m_tarBall;
++   bool m_bPreserveWS;
++   Q3ListViewItem *m_currentLVI;
++   unsigned int m_iterator;
++   enum State { Retrieving=0, Downloading, Saving };
++   State m_state;
++   QList <KUrl>m_urlsToDownload;
++   KTemporaryFile *m_tmpFile;
++   KUrl m_url;
++   DOM::Document m_document;
++   
+ };
+ 
+-
+ #endif // _ARCHIVEDIALOG_H_
+--- a/konq-plugins/webarchiver/archiveviewbase.ui
++++ b/konq-plugins/webarchiver/archiveviewbase.ui
+@@ -1,128 +1,143 @@
+-<ui version="4.0" >
+- <class>ArchiveViewBase</class>
+- <widget class="QWidget" name="ArchiveViewBase" >
+-  <property name="geometry" >
+-   <rect>
+-    <x>0</x>
+-    <y>0</y>
+-    <width>600</width>
+-    <height>483</height>
+-   </rect>
+-  </property>
+-  <property name="windowTitle" >
+-   <string>Web Archiver</string>
+-  </property>
+-  <layout class="QVBoxLayout" >
+-   <item>
+-    <layout class="QGridLayout" >
+-     <property name="leftMargin" >
+-      <number>0</number>
+-     </property>
+-     <property name="topMargin" >
+-      <number>0</number>
+-     </property>
+-     <property name="rightMargin" >
+-      <number>0</number>
+-     </property>
+-     <property name="bottomMargin" >
+-      <number>0</number>
+-     </property>
+-     <item row="1" column="1" >
+-      <widget class="QLabel" name="targetLabel" >
+-       <property name="sizePolicy" >
+-        <sizepolicy vsizetype="Minimum" hsizetype="Expanding" >
+-         <horstretch>0</horstretch>
+-         <verstretch>0</verstretch>
+-        </sizepolicy>
+-       </property>
+-       <property name="text" >
+-        <string>Local File</string>
+-       </property>
+-       <property name="wordWrap" >
+-        <bool>false</bool>
+-       </property>
+-       <property name="openExternalLinks" >
+-        <bool>true</bool>
+-       </property>
+-       <property name="textInteractionFlags" >
+-        <set>Qt::LinksAccessibleByMouse</set>
+-       </property>
+-      </widget>
+-     </item>
+-     <item row="1" column="0" >
+-      <widget class="QLabel" name="textLabel1_2" >
+-       <property name="text" >
+-        <string>To:</string>
+-       </property>
+-       <property name="wordWrap" >
+-        <bool>false</bool>
+-       </property>
+-      </widget>
+-     </item>
+-     <item row="0" column="0" >
+-      <widget class="QLabel" name="textLabel1" >
+-       <property name="text" >
+-        <string>Archiving:</string>
+-       </property>
+-       <property name="wordWrap" >
+-        <bool>false</bool>
+-       </property>
+-      </widget>
+-     </item>
+-     <item row="0" column="1" >
+-      <widget class="QLabel" name="urlLabel" >
+-       <property name="sizePolicy" >
+-        <sizepolicy vsizetype="Minimum" hsizetype="Expanding" >
+-         <horstretch>0</horstretch>
+-         <verstretch>0</verstretch>
+-        </sizepolicy>
+-       </property>
+-       <property name="text" >
+-        <string>Original URL</string>
+-       </property>
+-       <property name="wordWrap" >
+-        <bool>false</bool>
+-       </property>
+-       <property name="openExternalLinks" >
+-        <bool>true</bool>
+-       </property>
+-       <property name="textInteractionFlags" >
+-        <set>Qt::LinksAccessibleByMouse</set>
+-       </property>
+-      </widget>
+-     </item>
++<ui version="4.0" stdsetdef="1" >
++  <author></author>
++  <comment></comment>
++  <exportmacro></exportmacro>
++  <class>ArchiveViewBase</class>
++  <widget class="QWidget" name="ArchiveViewBase" >
++    <property name="geometry" >
++      <rect>
++        <x>0</x>
++        <y>0</y>
++        <width>600</width>
++        <height>483</height>
++      </rect>
++    </property>
++    <property name="windowTitle" >
++      <string>Web Archiver</string>
++    </property>
++    <layout class="QVBoxLayout" >
++      <item>
++        <layout class="QGridLayout" >
++          <property name="margin" >
++            <number>0</number>
++          </property>
++          <item row="1" column="1" >
++            <widget class="QLabel" name="targetLabel" >
++              <property name="textInteractionFlags" >
++                <enum>Qt::LinksAccessibleByMouse</enum>
++              </property>
++              <property name="openExternalLinks" >
++                <bool>true</bool>
++              </property>
++              <property name="sizePolicy" >
++                <sizepolicy>
++                  <hsizetype>7</hsizetype>
++                  <vsizetype>1</vsizetype>
++                  <horstretch>0</horstretch>
++                  <verstretch>0</verstretch>
++                </sizepolicy>
++              </property>
++              <property name="text" >
++                <string>Local File</string>
++              </property>
++              <property name="wordWrap" >
++                <bool>false</bool>
++              </property>
++            </widget>
++          </item>
++          <item row="1" column="0" >
++            <widget class="QLabel" name="textLabel1_2" >
++              <property name="text" >
++                <string>To:</string>
++              </property>
++              <property name="wordWrap" >
++                <bool>false</bool>
++              </property>
++            </widget>
++          </item>
++          <item row="0" column="0" >
++            <widget class="QLabel" name="textLabel1" >
++              <property name="text" >
++                <string>Archiving:</string>
++              </property>
++              <property name="wordWrap" >
++                <bool>false</bool>
++              </property>
++            </widget>
++          </item>
++          <item row="0" column="1" >
++            <widget class="QLabel" name="urlLabel" >
++              <property name="textInteractionFlags" >
++                <enum>Qt::LinksAccessibleByMouse</enum>
++              </property>
++              <property name="openExternalLinks" >
++                <bool>true</bool>
++              </property>
++              <property name="sizePolicy" >
++                <sizepolicy>
++                  <hsizetype>7</hsizetype>
++                  <vsizetype>1</vsizetype>
++                  <horstretch>0</horstretch>
++                  <verstretch>0</verstretch>
++                </sizepolicy>
++              </property>
++              <property name="text" >
++                <string>Original URL</string>
++              </property>
++              <property name="wordWrap" >
++                <bool>false</bool>
++              </property>
++            </widget>
++          </item>
++        </layout>
++      </item>
++      <item>
++        <widget class="QProgressBar" name="progressBar" />
++      </item>
++      <item>
++        <widget class="K3ListView" name="listView" >
++          <property name="resizeMode" >
++            <enum>AllColumns</enum>
++          </property>
++          <property name="fullWidth" >
++            <bool>true</bool>
++          </property>
++          <column>
++            <property name="text" >
++              <string>URL</string>
++            </property>
++            <property name="clickable" >
++              <bool>true</bool>
++            </property>
++            <property name="resizable" >
++              <bool>true</bool>
++            </property>
++          </column>
++          <column>
++            <property name="text" >
++              <string>State</string>
++            </property>
++            <property name="clickable" >
++              <bool>true</bool>
++            </property>
++            <property name="resizable" >
++              <bool>true</bool>
++            </property>
++          </column>
++        </widget>
++      </item>
+     </layout>
+-   </item>
+-   <item>
+-    <widget class="QProgressBar" name="progressBar" />
+-   </item>
+-   <item>
+-    <widget class="QTreeWidget" name="progressView" >
+-     <property name="rootIsDecorated" >
+-      <bool>false</bool>
+-     </property>
+-     <property name="columnCount" >
+-      <number>2</number>
+-     </property>
+-     <column>
+-      <property name="text" >
+-       <string>1</string>
+-      </property>
+-     </column>
+-     <column>
+-      <property name="text" >
+-       <string>2</string>
+-      </property>
+-     </column>
+-    </widget>
+-   </item>
+-  </layout>
+- </widget>
+- <layoutdefault spacing="6" margin="11" />
+- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+- <includes>
+-  <include location="local" >k3listview.h</include>
+- </includes>
+- <resources/>
+- <connections/>
++  </widget>
++  <layoutdefault spacing="6" margin="11" />
++  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
++  <customwidgets>
++    <customwidget>
++      <class>K3ListView</class>
++      <extends>Q3ListView</extends>
++      <header>k3listview.h</header>
++    </customwidget>
++  </customwidgets>
++  <includes>
++    <include location="local" >k3listview.h</include>
++  </includes>
+ </ui>
+--- a/konq-plugins/webarchiver/CMakeLists.txt
++++ b/konq-plugins/webarchiver/CMakeLists.txt
+@@ -13,7 +13,7 @@
+ 
+ 
+ 
+-target_link_libraries(webarchiverplugin  ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KHTML_LIBS} )
++target_link_libraries(webarchiverplugin  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KHTML_LIBS} )
+ 
+ install(TARGETS webarchiverplugin  DESTINATION ${PLUGIN_INSTALL_DIR} )
+ 
+--- a/konq-plugins/webarchiver/plugin_webarchiver.cpp
++++ b/konq-plugins/webarchiver/plugin_webarchiver.cpp
+@@ -17,7 +17,7 @@
+  *  Boston, MA 02110-1301, USA.
+  **/
+ 
+-/* $Id: plugin_webarchiver.cpp 869740 2008-10-09 22:12:30Z grimrath $ */
++/* $Id: plugin_webarchiver.cpp 634980 2007-02-18 23:19:02Z aseigo $ */
+ 
+ /*
+  * There are two recursions within this code:
+@@ -34,12 +34,10 @@
+ 
+ #include <kaction.h>
+ #include <kcomponentdata.h>
+-#include <kglobalsettings.h>
+ 
+ #include <kfiledialog.h>
+ #include <kmessagebox.h>
+ #include <klocale.h>
+-#include <khtmlview.h>
+ #include <khtml_part.h>
+ #include <kdebug.h>
+ #include <kgenericfactory.h>
+@@ -51,9 +49,9 @@
+ K_EXPORT_COMPONENT_FACTORY( libwebarchiverplugin,
+ 	                    PluginWebArchiverFactory( "webarchiver" ) )
+ 
+-PluginWebArchiver::PluginWebArchiver( QObject* parent,
++PluginWebArchiver::PluginWebArchiver( QObject* parent, 
+                                       const QStringList & )
+-  : Plugin( parent ), m_config(NULL)
++  : Plugin( parent )
+ {
+   QAction *a = actionCollection()->addAction( "archivepage");
+   a->setText(i18n("Archive &Web Page..."));
+@@ -63,7 +61,6 @@
+ 
+ PluginWebArchiver::~PluginWebArchiver()
+ {
+-  delete m_config;
+ }
+ 
+ void PluginWebArchiver::slotSaveToArchive()
+@@ -71,16 +68,13 @@
+   // ## Unicode ok?
+   if( !parent() || !parent()->inherits("KHTMLPart"))
+     return;
+-  KHTMLPart *part = qobject_cast<KHTMLPart *>( parent() );
++  KHTMLPart *part = static_cast<KHTMLPart *>( parent() );
+ 
+   QString archiveName = QString::fromUtf8(part->htmlDocument().title().string().toUtf8());
+ 
+   if (archiveName.isEmpty())
+     archiveName = i18n("Untitled");
+ 
+-  if (!m_config)
+-    m_config = new KConfig("webarchiverrc", KConfig::SimpleConfig);
+-
+   // Replace space with underscore, proposed Frank Pieczynski <pieczy@knuut.de>
+ 
+   archiveName = archiveName.simplified();
+@@ -90,10 +84,7 @@
+   archiveName.replace( "/", "");
+   archiveName = archiveName.replace( QRegExp("\\s+"), "_");
+ 
+-  QString lastCWD = m_config->entryMap()["savedialogcwd"];
+-  if (lastCWD.isNull())             // this is faster than "readEntry(.., QDir::homeDirPath())"
+-    lastCWD = KGlobalSettings::documentPath();
+-  archiveName = lastCWD + "/" + archiveName + ".war";
++  archiveName = QDir::homePath() + '/' + archiveName + ".war"; //Thanks ade
+ 
+   KUrl url = KFileDialog::getSaveUrl(archiveName, i18n("*.war *.tgz|Web Archives"), part->widget(),
+ 					  i18n("Save Page as Web-Archive") );
+@@ -107,9 +98,6 @@
+     return;
+   }
+ 
+-  lastCWD = url.directory();
+-  if (! lastCWD.isNull())
+-    m_config->entryMap()["savedialogcwd"] = lastCWD;
+   const QFile file(url.path());
+   if (file.exists()) {
+     const QString title = i18n( "File Exists" );
+@@ -119,19 +107,7 @@
+     }
+   }
+ 
+-  //
+-  // It is very important to make the archive dialog a child of the KHTMLPart!
+-  // If not crashes due to dangling refs will happen. For example if Konqueror quits
+-  // while archiving runs @c part becomes invalid. Furthermore the various @ref QHash<>
+-  // members of @ref ArchiveDialog contain DOM elements that use ref counting. Upon
+-  // exit of Konqueror @c part gets destroyed *before* our @ref ArchiveDialog . Since
+-  // our running ArchiveDialog keeps the DOM ref counts up KHTML triggers an assertion
+-  // in KHTMLGlobal
+-  //
+-  // In contrast if @ref ArchiveDialog is a child of the part view Qt ensures that all
+-  // child dialogs are destroyed _before_ @c part is destroyed.
+-  //
+-  ArchiveDialog *dialog=new ArchiveDialog(part->view(), url.path(), part);
++  ArchiveDialog *dialog=new ArchiveDialog(0L, url.path(), part);
+   dialog->show();
+   dialog->archive();
+ }
+--- a/konq-plugins/webarchiver/plugin_webarchiver.h
++++ b/konq-plugins/webarchiver/plugin_webarchiver.h
+@@ -30,15 +30,13 @@
+   Q_OBJECT
+ 
+  public:
+-  PluginWebArchiver( QObject* parent,
++  PluginWebArchiver( QObject* parent, 
+                      const QStringList & );
+   virtual ~PluginWebArchiver();
+ 
+  public slots:
+    void slotSaveToArchive();
+ 
+-private:
+-   KConfig *m_config;
+ };
+ 
+ #endif
+--- a/konq-plugins/CMakeLists.txt
++++ b/konq-plugins/CMakeLists.txt
+@@ -11,13 +11,8 @@
+ add_subdirectory( babelfish ) 
+ add_subdirectory( validators ) 
+ add_subdirectory( domtreeviewer ) 
+-macro_ensure_version( "4.1.60" ${KDEVERSION} KDE4_INSTALLED_VERSION_OK )
+ 
+-if(KDE4_INSTALLED_VERSION_OK)
+-   add_subdirectory( webarchiver )
+-else(KDE4_INSTALLED_VERSION_OK)
+-   MESSAGE(STATUS "webarchiver requires kde trunk")
+-endif(KDE4_INSTALLED_VERSION_OK)
++add_subdirectory( webarchiver )
+ 
+ #add_subdirectory( sidebar ) 
+ add_subdirectory( imagerotation ) 

@@ -9,7 +9,7 @@
  add_subdirectory( kimgalleryplugin ) 
 -add_subdirectory( dirfilter ) 
 +
-+# Doesn't work anymore
++# Dolphin-only
 +#add_subdirectory( dirfilter ) 
 +
  add_subdirectory( uachanger ) 

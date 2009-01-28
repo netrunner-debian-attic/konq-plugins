@@ -1,3 +1,11 @@
+konq-plugins (4:4.2.0-1) experimental; urgency=low
+
+  * New upstream version 4.2.0
+  * Remove 99_revert_webarchiver patch
+  * Migrate to pkg-kde-tools
+
+ -- Xavier Vello <xavier.vello@gmail.com>  Wed, 28 Jan 2009 23:05:38 +0100
+
 konq-plugins (4:4.1.3-1) experimental; urgency=low
 
   * New upstream release

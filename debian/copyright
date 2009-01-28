@@ -25,39 +25,39 @@ Copyright:
 
   file ~ license ~ copyright holder
 -------~---------~------------------
-  akregator/akregatorplugin.cpp ~ GPLv2h ~ Copyright (C) 2004 Gary Cramblitt <garycramblitt@comcast.net>
-  akregator/akregatorplugin.h ~ GPLv2h ~ Copyright (C) 2004 Gary Cramblitt <garycramblitt@comcast.net>
-  akregator/feeddetector.cpp ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
-  akregator/feeddetector.h ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
-  akregator/konqfeedicon.cpp ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
-  akregator/konqfeedicon.h ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
-  akregator/pluginbase.cpp ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
-  akregator/pluginbase.h ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/akregatorplugin.cpp ~ GPLv2+ ~ Copyright (C) 2004 Gary Cramblitt <garycramblitt@comcast.net>
+  akregator/akregatorplugin.h ~ GPLv2+ ~ Copyright (C) 2004 Gary Cramblitt <garycramblitt@comcast.net>
+  akregator/feeddetector.cpp ~ GPLv2+ ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/feeddetector.h ~ GPLv2+ ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/konqfeedicon.cpp ~ GPLv2+ ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/konqfeedicon.h ~ GPLv2+ ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/pluginbase.cpp ~ GPLv2+ ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/pluginbase.h ~ GPLv2+ ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
 
-  autorefresh/* ~ GPLv2h ~ Copyright 2003 by Richard J. Moore <rich@kde.org>
+  autorefresh/* ~ GPLv2+ ~ Copyright 2003 by Richard J. Moore <rich@kde.org>
 
   babelfish/* ~ LGPLv2 ~ Copyright (C) 2001 Kurt Granroth <granroth@kde.org>
                          Copyright (C) 2003 Rand2342 <rand2342@yahoo.com>
                          Copyright (C) 2008 Montel Laurent <montel@kde.org>
 
-  crashes/* ~ LGPLv2h ~ Copyright (c) 2002-2003 Alexander Kellett <lypanov@kde.org>
+  crashes/* ~ LGPLv2+ ~ Copyright (c) 2002-2003 Alexander Kellett <lypanov@kde.org>
 
   dirfilter/* ~ LGPLv2 ~ Copyright (C) 2000, 2001, 2002 Dawit Alemayehu <adawit@kde.org>
 
-  domtreeviewer/domlistviewitem.cpp ~ GPLv2h ~ Andreas Schlapbach <schlpbch@iam.unibe.ch>
-  domtreeviewer/domlistviewitem.h ~ GPLv2h ~ Andreas Schlapbach <schlpbch@iam.unibe.ch>
-  domtreeviewer/domtreecommands.cpp ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
-  domtreeviewer/domtreecommands.h ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
-  domtreeviewer/domtreeview.cpp ~ GPLv2h ~ (C) 2001 - The Kafka Team/Andreas Schlapbach
+  domtreeviewer/domlistviewitem.cpp ~ GPLv2+ ~ Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  domtreeviewer/domlistviewitem.h ~ GPLv2+ ~ Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  domtreeviewer/domtreecommands.cpp ~ LGPLv2+ ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/domtreecommands.h ~ LGPLv2+ ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/domtreeview.cpp ~ GPLv2+ ~ (C) 2001 - The Kafka Team/Andreas Schlapbach
                                                       <kde-kafka@master.kde.org>
                       (C) 2005 - Leo Savernik <schlpbch@iam.unibe.ch>
-  domtreeviewer/domtreeview.h ~ GPLv2h ~ (C) 2001 - The Kafka Team/Andreas Schlapbach
+  domtreeviewer/domtreeview.h ~ GPLv2+ ~ (C) 2001 - The Kafka Team/Andreas Schlapbach
                                                     <kde-kafka@master.kde.org>
                     (C) 2005 - Leo Savernik <schlpbch@iam.unibe.ch>
-  domtreeviewer/domtreewindow.cpp ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
-  domtreeviewer/domtreewindow.h ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
-  domtreeviewer/signalreceiver.cpp ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
-  domtreeviewer/signalreceiver.h ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/domtreewindow.cpp ~ LGPLv2+ ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/domtreewindow.h ~ LGPLv2+ ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/signalreceiver.cpp ~ LGPLv2+ ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/signalreceiver.h ~ LGPLv2+ ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
 
   fsview/* ~ GPLv2 ~ Copyright (C) 2002, 2003 Josef Weidendorfer <Josef.Weidendorfer@gmx.de>
 
@@ -91,24 +91,24 @@ Copyright:
                         # POSSIBILITY OF SUCH DAMAGE.
 
 
-  khtmlsettingsplugin/* ~ GPLv2h ~ Copyright (C) 2001 Carsten Pfeiffer <pfeiffer@kde.org>
+  khtmlsettingsplugin/* ~ GPLv2+ ~ Copyright (C) 2001 Carsten Pfeiffer <pfeiffer@kde.org>
 
   kimgalleryplugin/*  ~ LGPLv2 ~ Copyright (C) 2001, 2003 Lukas Tinkl <lukas@kde.org>
 
-  microformat/konqmficon.cpp ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  microformat/konqmficon.cpp ~ GPLv2+ ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
                                         Copyright (C) 2005 George Staikos <staikos@kde.org>
 
-  minitools/* ~ LGPLv2h ~ Copyright (c) 2003 Alexander Kellett <lypanov@kde.org>
+  minitools/* ~ LGPLv2+ ~ Copyright (c) 2003 Alexander Kellett <lypanov@kde.org>
 
-  rellinks/*  ~ GPLv2h ~ Copyright (C) 2002, Anders Lund <anders@alweb.dk>
+  rellinks/*  ~ GPLv2+ ~ Copyright (C) 2002, Anders Lund <anders@alweb.dk>
                          Copyright (C) 2003, 2004, Franck Quélain <shift@free.fr>
                          Copyright (C) 2004, Kevin Krammer <kevin.krammer@gmx.at>
                          Copyright (C) 2004, 2006, Olivier Goffart <ogoffart @ kde.org>
 
-  searchbar/searchbar.cpp ~ GPLv2h ~ Copyright (C) 2004 Arend van Beelen jr. <arend@auton.nl>
+  searchbar/searchbar.cpp ~ GPLv2+ ~ Copyright (C) 2004 Arend van Beelen jr. <arend@auton.nl>
 
-  sidebar/mediaplayer/* ~ GPLv2h ~ Joseph Wenninger <jowenn@kde.org>
-                        # Contains GPLv2h code from kaboodle and noatun, written by :
+  sidebar/mediaplayer/* ~ GPLv2+ ~ Joseph Wenninger <jowenn@kde.org>
+                        # Contains GPLv2+ code from kaboodle and noatun, written by :
                         # - Neil Stevens <multivac@fcmail.com>
                         # - Charles Samuels <charles@kde.org>
                         # - Stefan Schimanski <1Stein@gmx.de>
@@ -116,35 +116,49 @@ Copyright:
                         # - Stefan Westerfeld <stefan@space.twc.de>
                         # - Nikolas Zimmermann <wildfox@kde.org>
 
-  sidebar/metabar/* ~ GPLv2h ~ Florian Roth <florian@synatic.net>
+  sidebar/metabar/* ~ GPLv2+ ~ Florian Roth <florian@synatic.net>
 
-  uachanger/* ~ LGPLv2h ~ Copyright (c) 2001 Dawit Alemayehu <adawit@kde.org>
+  uachanger/* ~ LGPLv2+ ~ Copyright (c) 2001 Dawit Alemayehu <adawit@kde.org>
 
-  validators/plugin_validators.cpp ~ LGPLv2h ~ Copyright (C) 2001 by  Richard Moore <rich@kde.org>
-  validators/plugin_validators.h ~ LGPLv2h ~ Copyright (C) 2001 by  Richard Moore <rich@kde.org>
-  validators/validatorsdialog.cpp ~ LGPLv2h ~ Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
-  validators/validatorsdialog.h ~ LGPLv2h ~ Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  validators/clickiconlabel.cpp ~ GPLv2+ ~ Copyright (C) 2008 by  Pino Toscano <pino@kde.org>
+  validators/clickiconlabel.h ~ GPLv2+ ~ Copyright (C) 2008 by  Pino Toscano <pino@kde.org>
+  validators/FindLibTidy.cmake ~ BSD ~ Copyright (c) 2007, Paulo Moura Guedes, <moura@kdewebdev.org>
+  validators/plugin_validators.cpp ~ LGPLv2+ ~ Copyright (C) 2001 by  Richard Moore <rich@kde.org>
+                                               Copyright (C) 2008-2009 by  Pino Toscano <pino@kde.org>
+  validators/plugin_validators.h ~ LGPLv2+ ~ Copyright (C) 2001 by  Richard Moore <rich@kde.org>
+                                             Copyright (C) 2008-2009 by  Pino Toscano <pino@kde.org>
+  validators/reportdialog.cpp ~ GPLv2+ ~ Copyright (C) 2008 by  Pino Toscano <pino@kde.org>
+  validators/reportdialog.h ~ GPLv2+ ~ Copyright (C) 2008 by  Pino Toscano <pino@kde.org>
+  validators/tidy_validator.cpp ~ GPLv2+ ~ Copyright (C) 2008 by  Pino Toscano <pino@kde.org>
+  validators/tidy_validator.h ~ GPLv2+ ~ Copyright (C) 2008 by  Pino Toscano <pino@kde.org>
+  validators/validatorsdialog.cpp ~ LGPLv2+ ~ Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
+                                              Copyright (C) 2008 Pino Toscano <pino@kde.org>
+  validators/validatorsdialog.h ~ LGPLv2+ ~ Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
+                                            Copyright (C) 2008 Pino Toscano <pino@kde.org>
 
-  webarchiver/archivedialog.cpp ~ GPLv2h ~ Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
-                                          Copyright (C) 2003 Antonio Larrosa <larrosa@kde.org>
-  webarchiver/archivedialog.h ~ GPLv2h ~ Copyright (C) 2003 Antonio Larrosa <larrosa@kde.org>
+  webarchiver/archivedialog.cpp ~ GPLv2+ ~ Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
+                                           Copyright (C) 2003 Antonio Larrosa <larrosa@kde.org>
+                                           Copyright (C) 2008 Matthias Grimrath <maps4711@gmx.de>
+  webarchiver/archivedialog.h ~ GPLv2+ ~ Copyright (C) 2003 Antonio Larrosa <larrosa@kde.org>
+                                         Copyright (C) 2008 Matthias Grimrath <maps4711@gmx.de>
 
-  webarchiver/plugin_webarchiver.cpp ~ LGPLv2h ~ Copyright (C) 2001 by Andreas Schlapbach <schlpbch@iam.unibe.ch>
-  webarchiver/plugin_webarchiver.h ~ LGPLv2h ~ Copyright (C) 2001 by Andreas Schlapbach <schlpbch@iam.unibe.ch>
-  webarchiver/webarchivecreator.cpp ~ GPLv2h ~ Copyright (C) 2001 Malte Starostik <malte@kde.org>
-  webarchiver/webarchivecreator.h ~ GPLv2h ~ Copyright (C) 2001 Malte Starostik <malte@kde.org>
+  webarchiver/plugin_webarchiver.cpp ~ LGPLv2+ ~ Copyright (C) 2001 by Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  webarchiver/plugin_webarchiver.h ~ LGPLv2+ ~ Copyright (C) 2001 by Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  webarchiver/webarchivecreator.cpp ~ GPLv2+ ~ Copyright (C) 2001 Malte Starostik <malte@kde.org>
+  webarchiver/webarchivecreator.h ~ GPLv2+ ~ Copyright (C) 2001 Malte Starostik <malte@kde.org>
 
 -------------------------------------------------------------------------------
 Legend:
  - "unspec":    The file contains no specific copyright/license notice. This
                 means that the copyright holder is the KDE Development Team (as
                 listed above) and the license is GPL2, unless specified otherwise.
+ - "BSD":       The BSD License.
  - "GPLv2":     The GNU General Public License, version 2.
- - "GPLv2h":    The GNU General Public License, version 2 or (at your
+ - "GPLv2+":    The GNU General Public License, version 2 or (at your
                 option) higher.
 
- - "LGPLv2h":   The Lesser (or Library) GNU General Public License, version 2.
- - "LGPLv2h":   The Lesser (or Library) GNU General Public License, version
+ - "LGPLv2+":   The Lesser (or Library) GNU General Public License, version 2.
+ - "LGPLv2+":   The Lesser (or Library) GNU General Public License, version
                 2 or (at your option).
 
   GPLv2 pre-text :

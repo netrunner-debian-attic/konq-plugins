@@ -1,10 +1,10 @@
-konq-plugins (4:4.2.0-2) UNRELEASED; urgency=low
+konq-plugins (4:4.2.0-2) experimental; urgency=low
 
   * Remove 01_disable_plugins and README.Debian
   * Add 90_fix_doc_install
   * Add patchsys-quilt.mk in rules
 
- -- Xavier Vello <xavier.vello@gmail.com>  Mon, 02 Feb 2009 01:54:33 +0100
+ -- Xavier Vello <xavier.vello@gmail.com>  Mon, 02 Feb 2009 22:31:14 +0100
 
 konq-plugins (4:4.2.0-1) experimental; urgency=low
 

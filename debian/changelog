@@ -2,6 +2,7 @@ konq-plugins (4:4.2.2-1) experimental; urgency=low
 
   * New upstream release.
   * Remove 90_fix_doc_install patch
+  * Bump build-deps
 
  -- Sune Vuorela <debian@pusling.com>  Mon, 06 Apr 2009 21:44:56 +0200
 

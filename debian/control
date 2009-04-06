@@ -3,7 +3,7 @@ Section: utils
 Priority: extra
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Build-Depends: debhelper (>= 6), cmake, quilt (>= 0.40), cdbs, libtidy-dev,
- pkg-kde-tools (>= 0.2), libkonq5-dev (>= 4:4.1.0)
+ pkg-kde-tools (>= 0.4.2), libkonq5-dev (>= 4:4.2.0)
 Uploaders: Xavier Vello <xavier.vello@gmail.com>
 Standards-Version: 3.8.0
 

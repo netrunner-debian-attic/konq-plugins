@@ -1,4 +1,4 @@
-konq-plugins (4:4.2.2-1) experimental; urgency=low
+konq-plugins (4:4.2.2-1) unstable; urgency=low
 
   * New upstream release.
   * Remove 90_fix_doc_install patch

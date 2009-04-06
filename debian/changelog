@@ -1,3 +1,10 @@
+konq-plugins (4:4.2.2-1) experimental; urgency=low
+
+  * New upstream release.
+  * Remove 90_fix_doc_install patch
+
+ -- Sune Vuorela <debian@pusling.com>  Mon, 06 Apr 2009 21:44:56 +0200
+
 konq-plugins (4:4.2.0-2) experimental; urgency=low
 
   * Remove 01_disable_plugins and README.Debian

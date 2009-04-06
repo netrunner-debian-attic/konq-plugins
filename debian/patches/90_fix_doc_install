@@ -1,8 +1,0 @@
---- a/doc/CMakeLists.txt
-+++ b/doc/CMakeLists.txt
-@@ -11,4 +11,4 @@
- add_subdirectory(webarchiver)
- ########### install files ###############
- 
--kde4_create_handbook(index.docbook INSTALL_DESTINATION ${HTML_INSTALL_DIR}/en)
-+kde4_create_handbook(index.docbook INSTALL_DESTINATION ${HTML_INSTALL_DIR}/en SUBDIR konq-plugins)

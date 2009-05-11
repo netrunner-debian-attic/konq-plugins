@@ -1,0 +1,5 @@
+usr/share/kde4/apps/khtml/kpartplugins/autorefresh.desktop
+usr/share/kde4/apps/khtml/kpartplugins/autorefresh.rc
+usr/share/kde4/apps/webkitpart/kpartplugins/autorefresh.desktop
+usr/share/kde4/apps/webkitpart/kpartplugins/autorefresh.rc
+usr/lib/kde4/autorefresh.so

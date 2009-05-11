@@ -1,0 +1,8 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/class/kde4.mk
+
+export KUBUNTU_DESKTOP_POT=extragear-base_konq-plugins
+
+DEB_INSTALL_DOCS_ALL=
+

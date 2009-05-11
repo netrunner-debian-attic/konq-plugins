@@ -1,0 +1,8 @@
+usr/share/kde4/services/fsview_part.desktop
+usr/share/kde4/apps/fsview/fsview_part.rc
+usr/share/icons/hicolor/32x32/apps/fsview.png
+usr/share/icons/hicolor/22x22/apps/fsview.png
+usr/bin/fsview
+usr/lib/kde4/fsviewpart.so
+usr/share/doc/kde/HTML/en/konq-plugins/fsview/*
+

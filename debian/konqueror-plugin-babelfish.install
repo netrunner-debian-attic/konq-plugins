@@ -1,0 +1,8 @@
+usr/share/kde4/config/translaterc
+usr/share/kde4/apps/khtml/kpartplugins/plugin_babelfish.rc
+usr/share/kde4/apps/khtml/kpartplugins/plugin_babelfish.desktop
+usr/share/icons/oxygen/16x16/actions/babelfish.png
+usr/share/icons/oxygen/22x22/actions/babelfish.png
+usr/lib/kde4/babelfishplugin.so
+usr/share/doc/kde/HTML/en/konq-plugins/babel/*
+

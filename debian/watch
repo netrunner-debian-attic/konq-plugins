@@ -1,0 +1,2 @@
+version=3
+ftp://ktown.kde.org/pub/kde/stable/latest/extragear/konq-plugins-(.*).tar.bz2 debian uupdate

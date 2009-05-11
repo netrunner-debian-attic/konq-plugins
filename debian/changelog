@@ -1,0 +1,97 @@
+konq-plugins (4:4.2.2-0ubuntu1) jaunty; urgency=low
+
+  * New upstream release
+  * Set KUBUNTU_DESKTOP_POT
+
+ -- Jonathan Riddell <jriddell@ubuntu.com>  Wed, 08 Apr 2009 13:35:00 +0100
+
+konq-plugins (4:4.2.2-0ubuntu1~ppa1) jaunty; urgency=low
+
+  * New upstream release
+    - Add debian/watch file
+    - Bump Dependencies
+
+ -- Nathan Handler <nhandler@ubuntu.com>  Fri, 03 Apr 2009 21:08:40 +0000
+
+konq-plugins (4:4.2.0a-0ubuntu2) jaunty; urgency=low
+
+  * Adjust doc paths in debian/konqueror-plugins.install to correct i386 FTBFS
+
+ -- Scott Kitterman <scott@kitterman.com>  Wed, 25 Feb 2009 00:19:21 -0500
+
+konq-plugins (4:4.2.0a-0ubuntu1) jaunty; urgency=low
+
+  * Create new tar with Message.sh files included
+
+ -- Jonathan Riddell <jriddell@ubuntu.com>  Mon, 16 Feb 2009 16:01:11 +0000
+
+konq-plugins (4:4.2.0-0ubuntu1) jaunty; urgency=low
+
+  * New upstream release
+    - Remove 01-disable-plugins, no longer needed
+    - Remove quilt build-dep since no patches are used
+    - Add binary packages for adblock akregator, dirfilter, and crashes
+      plugins
+    - Bump Konqueror depends versions to (>=4:4.2.0) throughout debian/control
+    - Remove microtools plugin packaging, it was disabled upstream
+    - Update file install paths to reflect filename changes
+  * Use our kde4.mk rather than built-in cdbs
+  * Remove uneeded THIS_SHOLD_GO_TO_UNSTABLE = 1 from debian/rules
+  * Update documentation install paths in various debian/.install files
+  * Remove extra blank line at the bottom of
+    debian/konqueror-plugin-kimgallery.install
+
+ -- Jonathan Thomas <echidnaman@kubuntu.org>  Tue, 27 Jan 2009 15:13:55 -0500
+
+konq-plugins (4:4.1.2-0ubuntu2) intrepid; urgency=low
+
+  * debian/control: 
+    - removed konqueror-plugins dep on konqueror-plugin-l10n
+
+ -- Steve Stalcup <vorian@ubuntu.com>  Fri, 03 Oct 2008 22:21:35 -0400
+
+konq-plugins (4:4.1.2-0ubuntu1) intrepid; urgency=low
+
+  * New upstream release
+  * debian/control
+    - bump libkonq5-dev to >= 4:4.1.2
+
+ -- Steve Stalcup <vorian@ubuntu.com>  Wed, 01 Oct 2008 10:54:54 -0400
+
+konq-plugins (4:4.1~svn831460-0ubuntu2) intrepid; urgency=low
+
+  * konqueror-plugin-imagerotation and konqueror-plugin-fsview conflict 
+    konq-plugins (<< 4:4.1~svn826310) due to manpage collision in an hardy to
+    intrepid upgrade
+  * Add KUBUNTU-DEBIAN-DIFFERENCES
+
+ -- Harald Sitter <apachelogger@ubuntu.com>  Wed, 03 Sep 2008 12:56:17 +0200
+
+konq-plugins (4:4.1~svn831460-0ubuntu1) intrepid; urgency=low
+
+  * New svn snapshot
+  * Split up the package
+  * konq-plugin is a metapackage
+  * New package is konqueror-plugins
+
+ -- Anthony Mercatante <tonio@ubuntu.com>  Sat, 12 Jul 2008 21:19:32 +0200
+
+konq-plugins (4:4.1~svn827788-1) experimental; urgency=low
+
+  * New snapshot (2008-07-03 21:28:43 +0200)
+    - fix autorefresh version
+  * Not building akregator plugin (doesn't work)
+
+  * Ported build system to cdbs
+  * /usr/share/kde4/conf/translaterc is a configuration file
+  * Described disabled plugins in README.debian
+  * Not packaging documentation for disabled plugins
+
+ -- Xavier Vello <xavier.vello@gmail.com>  Sat, 05 Jul 2008 18:00:28 +0200
+
+konq-plugins (4:4.1~svn826310-1) experimental; urgency=low
+
+  * Initial packaging (Closes: #488398)
+    From SVN revision 826310 (Mon 30 Jun 2008, 13:59:02 +0200
+
+ -- Xavier Vello <xavier.vello@gmail.com>  Mon, 30 Jun 2008 14:04:05 +0200

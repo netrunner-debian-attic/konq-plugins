@@ -1,0 +1,5 @@
+usr/share/kde4/apps/khtml/kpartplugins/khtmlsettingsplugin.rc
+usr/share/kde4/apps/khtml/kpartplugins/khtmlsettingsplugin.desktop
+usr/lib/kde4/khtmlsettingsplugin.so
+usr/share/doc/kde/HTML/en/konq-plugins/khtmlsettings/*
+

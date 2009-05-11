@@ -1,0 +1,8 @@
+usr/lib/kde4/crashesplugin.so
+usr/share/doc/kde/HTML/en/konq-plugins/crashes/common
+usr/share/doc/kde/HTML/en/konq-plugins/crashes/index.cache.bz2
+usr/share/doc/kde/HTML/en/konq-plugins/crashes/index.docbook
+usr/share/kde4/apps/khtml/kpartplugins/crashesplugin.desktop
+usr/share/kde4/apps/khtml/kpartplugins/crashesplugin.rc
+usr/share/kde4/apps/webkitpart/kpartplugins/crashesplugin.desktop
+usr/share/kde4/apps/webkitpart/kpartplugins/crashesplugin.rc

@@ -1,0 +1,6 @@
+usr/share/kde4/apps/domtreeviewer/domtreeviewerui.rc
+usr/share/kde4/apps/khtml/kpartplugins/plugin_domtreeviewer.rc
+usr/share/kde4/apps/khtml/kpartplugins/plugin_domtreeviewer.desktop
+usr/lib/kde4/domtreeviewerplugin.so
+usr/share/doc/kde/HTML/en/konq-plugins/domtreeviewer/*
+

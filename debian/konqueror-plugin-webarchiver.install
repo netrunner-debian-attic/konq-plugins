@@ -1,0 +1,9 @@
+usr/lib/kde4/webarchiverplugin.so
+usr/lib/kde4/webarchivethumbnail.so
+usr/share/kde4/services/webarchivethumbnail.desktop
+usr/share/kde4/apps/khtml/kpartplugins/plugin_webarchiver.rc
+usr/share/kde4/apps/khtml/kpartplugins/plugin_webarchiver.desktop
+usr/share/icons/oxygen/16x16/actions/webarchiver.png
+usr/share/icons/oxygen/22x22/actions/webarchiver.png
+usr/share/doc/kde/HTML/en/konq-plugins/webarchiver/*
+

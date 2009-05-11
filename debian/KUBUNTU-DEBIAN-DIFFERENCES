@@ -1,0 +1,3 @@
+  * konqueror-plugin-imagerotation and konqueror-plugin-fsview conflict
+    konq-plugins (<< 4:4.1~svn826310) due to manpage collision in an hardy to
+    intrepid upgrade

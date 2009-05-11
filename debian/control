@@ -1,0 +1,168 @@
+Source: konq-plugins
+Section: utils
+Priority: extra
+Maintainer: Kubuntu Developers <kubuntu-devel@lists.ubuntu.com>
+XSBC-Original-Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
+Build-Depends: debhelper (>= 6), cdbs, cmake (>= 2.6.2), libkonq5-dev (>= 4:4.2.2)
+Uploaders: Xavier Vello <xavier.vello@gmail.com>
+Standards-Version: 3.8.0
+
+Package: konq-plugins
+Architecture: all
+Depends: ${shlibs:Depends}, konqueror-plugins (= ${binary:Version})
+Description: Description: Transitional package
+ This dummy package is provided for a smooth transition from konq-plugins to,
+ the konqueror-plugins package.
+ It may safely be removed after installation.
+
+Package: konqueror-plugins
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2), 
+ konqueror-plugin-khtmlsettings, konqueror-plugin-kimgallery,
+ konqueror-plugin-uachanger, konqueror-plugin-babelfish, konqueror-plugin-validators,
+ konqueror-plugin-domtreeviewer, konqueror-plugin-webarchiver,
+ konqueror-plugin-imagerotation, konqueror-plugin-minitools,
+ konqueror-plugin-autorefresh, konqueror-plugin-fsview, konqueror-plugin-searchbar, 
+ konqueror-plugin-rellinks, konqueror-plugin-adblock, konqueror-plugin-akregator,
+ konqueror-plugin-crashes, konqueror-plugin-dirfilter
+Enhances: konqueror
+Description: plugins for Konqueror, the KDE file/web/doc browser
+ This package intalls a variety of useful plugins for Konqueror, the
+ file manager, web browser and document viewer for KDE.  Many of these
+ plugins will appear in Konqueror's Tools menu.
+ .
+ These plugins are not part of the official KDE4 release, they are a
+ development snapshot of extragear software.
+
+Package: konqueror-plugin-khtmlsettings
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: KHTML configuration plugin for konqueror
+ This package contains a variety of useful plugins for Konqueror.
+
+Package: konqueror-plugin-kimgallery
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Image gallery plugin for konqueror
+ This plugin allows the creation of image galleries.
+
+Package: konqueror-plugin-uachanger 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: User-agent changer plugin for konqueror
+ This plugin allows to create, modify and switch the user-agent
+ used with KHTML.
+
+Package: konqueror-plugin-babelfish 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Web page translation plugin for konqueror
+ This plugin allows the usage of the Babelfish web translation
+ service to translate web pages.
+
+Package: konqueror-plugin-validators 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Code validator plugin for konqueror
+ This plugin allows the usage of W3C validators for web pages
+ code.
+
+Package: konqueror-plugin-domtreeviewer 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Dom tree viewer plugin for konqueror
+ This plugin is intented to be used by web developpers, making it
+ possible to view the dom tree.
+
+Package: konqueror-plugin-webarchiver 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Web archiver plugin for konqueror
+ This plugin makes it possible to archive web pages for offline
+ web browsing.
+
+Package: konqueror-plugin-imagerotation 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2), python, libjpeg-progs
+Recommends: imagemagick
+Enhances: konqueror
+Conflicts: konq-plugins (<< 4:4.1~svn826310)
+Description: Images rotation plugin for konqueror
+ This plugin allows the rotation of images when browsing files.
+
+Package: konqueror-plugin-minitools 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Bookmarklets plugin for konqueror
+ This plugin allows the creation and management of bookmarklets.
+
+Package: konqueror-plugin-autorefresh 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Autorefresh plugin for konqueror
+ This plugin allows to set an auto-refresh parameter on a tab when browsing
+ web pages.
+
+Package: konqueror-plugin-fsview 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Conflicts: konq-plugins (<< 4:4.1~svn826310)
+Description: FSView plugin for konqueror
+ This plugin allows to show disc utilization in a graphical form, much
+ like the UNIX command 'du'
+
+Package: konqueror-plugin-searchbar 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Search bar plugin for konqueror
+ This plugin adds a search bar to konqueror, making it possible to use
+ several search engines (google, yahoo...).
+
+Package: konqueror-plugin-rellinks 
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Re-linker plugin for konqueror
+ This plugin allosws to access the relations defined in the header of the
+ document. These relations can be links to other versions of the document,
+ RSS backend, search page, copyright informations...
+
+Package: konqueror-plugin-adblock
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Adblock plugin for konqueror
+ This plugin provides ad-blocking functionality for Konqueror.
+
+Package: konqueror-plugin-akregator
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Akregator plugin for konqueror
+ This plugin allows you to add feeds directly to Akregator from Konqueror
+
+Package: konqueror-plugin-crashes
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Crash monitor plugin for konqueror
+ This plugin records instances of Konqueror crashes for easier recovery
+
+Package: konqueror-plugin-dirfilter
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.2.2)
+Enhances: konqueror
+Description: Directory filter plugin for konqueror
+ This plugin provides a directory filter mechanism for file browsing in
+ Konqueror

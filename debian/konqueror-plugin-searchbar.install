@@ -1,0 +1,9 @@
+usr/share/kde4/apps/konqueror/kpartplugins/searchbar.desktop
+usr/share/kde4/apps/konqueror/kpartplugins/searchbar.rc
+usr/share/kde4/apps/konqueror/icons/oxygen/scalable/actions/google.svgz
+usr/share/kde4/apps/konqueror/icons/oxygen/64x64/actions/google.png
+usr/share/kde4/apps/konqueror/icons/oxygen/32x32/actions/google.png
+usr/share/kde4/apps/konqueror/icons/oxygen/16x16/actions/google.png
+usr/share/kde4/apps/konqueror/icons/oxygen/22x22/actions/google.png
+usr/share/kde4/apps/konqueror/icons/oxygen/48x48/actions/google.png
+usr/lib/kde4/searchbarplugin.so

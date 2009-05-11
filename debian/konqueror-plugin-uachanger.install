@@ -1,0 +1,7 @@
+usr/share/kde4/apps/khtml/kpartplugins/uachangerplugin.rc
+usr/share/kde4/apps/khtml/kpartplugins/uachangerplugin.desktop
+usr/share/kde4/apps/webkitpart/kpartplugins/uachangerplugin.rc
+usr/share/kde4/apps/webkitpart/kpartplugins/uachangerplugin.desktop
+usr/lib/kde4/uachangerplugin.so
+usr/share/doc/kde/HTML/en/konq-plugins/uachanger/*
+

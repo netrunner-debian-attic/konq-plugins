@@ -1,0 +1,185 @@
+This package was debianized by Xavier Vello <xavier.vello@gmail.com> on
+Mon, 30 Jun 2008 14:04:05 +0200.
+
+It was downloaded from <svn://anonsvn.kde.org/home/kde/trunk/extragear/base>
+
+Upstream Authors: 
+
+  Many and varied; this package is simply a collection of add-ons and
+  plugins.  See detailed list below and http://www.kde.org/people/credits/
+  for further details.
+
+Copyright: 
+
+  The documentation docbook files in this package, placed under docs/, are under 
+  the GNU Free Documentation License:
+
+    | Permission is granted to copy, distribute and/or modify this
+    | document under the terms of the GNU Free Documentation License,
+    | Version 1.1 or any later version published by the Free Software
+    | Foundation; with no Invariant Sections, with no Front-Cover Texts,
+    | and with no Back-Cover Texts.
+
+  The full text of the GNU Free Documentation License is available on
+  Debian systems in /usr/share/common-licenses/GFDL-1.2
+
+  file ~ license ~ copyright holder
+-------~---------~------------------
+  akregator/akregatorplugin.cpp ~ GPLv2h ~ Copyright (C) 2004 Gary Cramblitt <garycramblitt@comcast.net>
+  akregator/akregatorplugin.h ~ GPLv2h ~ Copyright (C) 2004 Gary Cramblitt <garycramblitt@comcast.net>
+  akregator/feeddetector.cpp ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/feeddetector.h ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/konqfeedicon.cpp ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/konqfeedicon.h ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/pluginbase.cpp ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+  akregator/pluginbase.h ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+
+  autorefresh/* ~ GPLv2h ~ Copyright 2003 by Richard J. Moore <rich@kde.org>
+
+  babelfish/* ~ LGPLv2 ~ Copyright (C) 2001 Kurt Granroth <granroth@kde.org>
+                         Copyright (C) 2003 Rand2342 <rand2342@yahoo.com>
+                         Copyright (C) 2008 Montel Laurent <montel@kde.org>
+
+  crashes/* ~ LGPLv2h ~ Copyright (c) 2002-2003 Alexander Kellett <lypanov@kde.org>
+
+  dirfilter/* ~ LGPLv2 ~ Copyright (C) 2000, 2001, 2002 Dawit Alemayehu <adawit@kde.org>
+
+  domtreeviewer/domlistviewitem.cpp ~ GPLv2h ~ Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  domtreeviewer/domlistviewitem.h ~ GPLv2h ~ Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  domtreeviewer/domtreecommands.cpp ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/domtreecommands.h ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/domtreeview.cpp ~ GPLv2h ~ (C) 2001 - The Kafka Team/Andreas Schlapbach
+                                                      <kde-kafka@master.kde.org>
+                      (C) 2005 - Leo Savernik <schlpbch@iam.unibe.ch>
+  domtreeviewer/domtreeview.h ~ GPLv2h ~ (C) 2001 - The Kafka Team/Andreas Schlapbach
+                                                    <kde-kafka@master.kde.org>
+                    (C) 2005 - Leo Savernik <schlpbch@iam.unibe.ch>
+  domtreeviewer/domtreewindow.cpp ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/domtreewindow.h ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/signalreceiver.cpp ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+  domtreeviewer/signalreceiver.h ~ LGPLv2h ~ Copyright (C) 2005 Leo Savernik <l.savernik@aon.at>
+
+  fsview/* ~ GPLv2 ~ Copyright (C) 2002, 2003 Josef Weidendorfer <Josef.Weidendorfer@gmx.de>
+
+  imagerotation/orient.py ~ unspec
+  imagerotation/jpegorient ~ unspec
+  imagerotation/exif.py ~ Copyright 2002 Gene Cash All rights reserved
+                        # Contains code from "exifdump.py" originally written by Thierry Bousch
+                        # <bousch@topo.math.u-psud.fr> and released into the public domain.
+                        #
+                        # Redistribution and use in source and binary forms, with or without
+                        # modification, are permitted provided that the following conditions are
+                        # met:
+                        #
+                        #    1. Redistributions of source code must retain the above copyright
+                        #       notice, this list of conditions and the following disclaimer.
+                        #    2. Redistributions in binary form must reproduce the above copyright
+                        #       notice, this list of conditions and the following disclaimer in the
+                        #       documentation and/or other materials provided with the
+                        #       distribution.
+                        #
+                        # THIS SOFTWARE IS PROVIDED BY GENE CASH ``AS IS'' AND ANY EXPRESS OR
+                        # IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+                        # OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+                        # DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR
+                        # ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+                        # DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+                        # OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+                        # HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+                        # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+                        # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+                        # POSSIBILITY OF SUCH DAMAGE.
+
+
+  khtmlsettingsplugin/* ~ GPLv2h ~ Copyright (C) 2001 Carsten Pfeiffer <pfeiffer@kde.org>
+
+  kimgalleryplugin/*  ~ LGPLv2 ~ Copyright (C) 2001, 2003 Lukas Tinkl <lukas@kde.org>
+
+  microformat/konqmficon.cpp ~ GPLv2h ~ Copyright (C) 2004 Teemu Rytilahti <tpr@d5k.net>
+                                        Copyright (C) 2005 George Staikos <staikos@kde.org>
+
+  minitools/* ~ LGPLv2h ~ Copyright (c) 2003 Alexander Kellett <lypanov@kde.org>
+
+  rellinks/*  ~ GPLv2h ~ Copyright (C) 2002, Anders Lund <anders@alweb.dk>
+                         Copyright (C) 2003, 2004, Franck Quélain <shift@free.fr>
+                         Copyright (C) 2004, Kevin Krammer <kevin.krammer@gmx.at>
+                         Copyright (C) 2004, 2006, Olivier Goffart <ogoffart @ kde.org>
+
+  searchbar/searchbar.cpp ~ GPLv2h ~ Copyright (C) 2004 Arend van Beelen jr. <arend@auton.nl>
+
+  sidebar/mediaplayer/* ~ GPLv2h ~ Joseph Wenninger <jowenn@kde.org>
+                        # Contains GPLv2h code from kaboodle and noatun, written by :
+                        # - Neil Stevens <multivac@fcmail.com>
+                        # - Charles Samuels <charles@kde.org>
+                        # - Stefan Schimanski <1Stein@gmx.de>
+                        # - Malte Starostik <malte@kde.org>
+                        # - Stefan Westerfeld <stefan@space.twc.de>
+                        # - Nikolas Zimmermann <wildfox@kde.org>
+
+  sidebar/metabar/* ~ GPLv2h ~ Florian Roth <florian@synatic.net>
+
+  uachanger/* ~ LGPLv2h ~ Copyright (c) 2001 Dawit Alemayehu <adawit@kde.org>
+
+  validators/plugin_validators.cpp ~ LGPLv2h ~ Copyright (C) 2001 by  Richard Moore <rich@kde.org>
+  validators/plugin_validators.h ~ LGPLv2h ~ Copyright (C) 2001 by  Richard Moore <rich@kde.org>
+  validators/validatorsdialog.cpp ~ LGPLv2h ~ Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  validators/validatorsdialog.h ~ LGPLv2h ~ Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
+
+  webarchiver/archivedialog.cpp ~ GPLv2h ~ Copyright (C) 2001 Andreas Schlapbach <schlpbch@iam.unibe.ch>
+                                          Copyright (C) 2003 Antonio Larrosa <larrosa@kde.org>
+  webarchiver/archivedialog.h ~ GPLv2h ~ Copyright (C) 2003 Antonio Larrosa <larrosa@kde.org>
+
+  webarchiver/plugin_webarchiver.cpp ~ LGPLv2h ~ Copyright (C) 2001 by Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  webarchiver/plugin_webarchiver.h ~ LGPLv2h ~ Copyright (C) 2001 by Andreas Schlapbach <schlpbch@iam.unibe.ch>
+  webarchiver/webarchivecreator.cpp ~ GPLv2h ~ Copyright (C) 2001 Malte Starostik <malte@kde.org>
+  webarchiver/webarchivecreator.h ~ GPLv2h ~ Copyright (C) 2001 Malte Starostik <malte@kde.org>
+
+-------------------------------------------------------------------------------
+Legend:
+ - "unspec":    The file contains no specific copyright/license notice. This
+                means that the copyright holder is the KDE Development Team (as
+                listed above) and the license is GPL2, unless specified otherwise.
+ - "GPLv2":     The GNU General Public License, version 2.
+ - "GPLv2h":    The GNU General Public License, version 2 or (at your
+                option) higher.
+
+ - "LGPLv2h":   The Lesser (or Library) GNU General Public License, version 2.
+ - "LGPLv2h":   The Lesser (or Library) GNU General Public License, version
+                2 or (at your option).
+
+  GPLv2 pre-text :
+    | This program is free software; you can redistribute it and/or modify
+    | it under the terms of the GNU General Public License as published by
+    | the Free Software Foundation; version 2 dated June, 1991.
+    |
+    | This package is distributed in the hope that it will be useful,
+    | but WITHOUT ANY WARRANTY; without even the implied warranty of
+    | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    | GNU General Public License for more details.
+    |
+    | You should have received a copy of the GNU General Public License
+    | along with this program; if not, write to the Free Software Foundation,
+    | Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+  On Debian systems, the complete text of the GNU General
+  Public License can be found in `/usr/share/common-licenses/GPL-2'.
+
+  LGPLv2 pre-text :
+    | This library is free software; you can redistribute it and/or
+    | modify it under the terms of the GNU Library General Public
+    | License version 2 as published by the Free Software Foundation.
+    |
+    | This library is distributed in the hope that it will be useful,
+    | but WITHOUT ANY WARRANTY; without even the implied warranty of
+    | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    | Library General Public License for more details.
+    |
+    | You should have received a copy of the GNU Library General Public License
+    | along with this library; see the file COPYING.LIB.  If not, write to
+    | the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+    | Boston, MA 02110-1301, USA.
+  On Debian systems, the complete text of the GNU General Lesser
+  Public License can be found in `/usr/share/common-licenses/LGPL-2'.
+
+
+  The Debian packaging is (C) 2008, Xavier Vello <xavier.vello@gmail.com> 
+  and is licensed under the GPL, see above.

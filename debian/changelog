@@ -1,5 +1,6 @@
 konq-plugins (4:4.2.3-1) UNRELEASED; urgency=low
 
+  * New upstream release.
   * debian/{watch,rules}
     - Add get-orig-source target and a watch file accordingly.
   * Bump Standards to 3.8.1. No changes needed.

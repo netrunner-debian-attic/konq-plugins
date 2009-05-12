@@ -11,9 +11,8 @@ Package: konq-plugins
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.1.0),
  python, libjpeg-progs
-Conflicts: kde-i18n
 Enhances: konqueror
-Recommends: imagemagick
+Recommends: imagemagick, konq-plugins-l10n
 Description: plugins for Konqueror, the KDE file/web/doc browser
  This package contains a variety of useful plugins for Konqueror, the
  file manager, web browser and document viewer for KDE.  Many of these
@@ -44,6 +43,18 @@ Description: plugins for Konqueror, the KDE file/web/doc browser
  - Transform Image (service menu) : rotate and flip images
  - Convert To (service menu) : convert and image to another format
  - Directory Filter (dolphin) : filter directory views
+ .
+ These plugins are not part of the official KDE4 desktop, they are a
+ extragear software and may get out of sync of konqueror.
+
+Package: konq-plugins-l10n
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: konq-plugins (>= 4:4.2.3)
+Conflicts: kde-i18n, konq-plugins (<= 4:4.2.2)
+Description: plugins for Konqueror, the KDE file/web/doc browser (localisation)
+ This package contains the translations for the useful plugins for Konqueror
+ from package konq-plugins.
  .
  These plugins are not part of the official KDE4 desktop, they are a
  extragear software and may get out of sync of konqueror.

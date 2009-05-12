@@ -4,6 +4,8 @@ include /usr/share/pkg-kde-tools/makefiles/1/cdbs/kde.mk
 include /usr/share/cdbs/1/rules/patchsys-quilt.mk
 include /usr/share/cdbs/1/rules/debhelper.mk
 
+DEB_DH_INSTALL_SOURCEDIR := debian/tmp
+
 binary-install/konq-plugins::
 	dh_installman -pkonq-plugins --language=C debian/man/*.1
 

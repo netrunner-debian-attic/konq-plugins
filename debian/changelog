@@ -6,6 +6,7 @@ konq-plugins (4:4.2.3-1) UNRELEASED; urgency=low
   * Bump Standards to 3.8.1. No changes needed.
   * debian/control
     - Add myself to Uploaders
+    - Indent the list of plugins to calm lintian down.
   * Split package in konq-plugins{,-l10n} to spare disk space and bandwidth.
 
  -- Didier Raboud <didier@raboud.com>  Mon, 11 May 2009 17:52:09 +0200

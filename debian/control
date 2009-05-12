@@ -19,30 +19,30 @@ Description: plugins for Konqueror, the KDE file/web/doc browser
  plugins will appear in Konqueror's Tools menu.
  .
  Web navigation plugins :
- - Akregator feed icon : allows to add a feed to Akregator from Konqueror
- - Auto Refresh : refresh a webpage at a given rate
- - Bookmarklets : enables the use of bookmarklets, bookmarks containing
- javascript code
- - Document Relations : displays the document relations of a document
- - DOM Tree Viewer : view the DOM tree of the current page
- - KHTML Settings : fast way to change the javascript/images/cookies settings
- - Microformat Icon : displays an icon in the statusbar if the page contains
- a microformat
- - Search Bar : launch web searches from the konqueror toolbar
- - Translate : language translation for the current page using Babelfish
- - UserAgent Changer : allows the detected UserAgent to be modified
- - Website Validators : CSS and HTML validation tools
- - Web Archiver : creates archives of websites
- - Crash manager : restore your opened tabs if konqueror crashes (disabled
- by default as konqueror 4 has this feature builtin)
+  - Akregator feed icon : allows to add a feed to Akregator from Konqueror
+  - Auto Refresh : refresh a webpage at a given rate
+  - Bookmarklets : enables the use of bookmarklets, bookmarks containing
+    javascript code
+  - Document Relations : displays the document relations of a document
+  - DOM Tree Viewer : view the DOM tree of the current page
+  - KHTML Settings : fast way to change the javascript/images/cookies settings
+  - Microformat Icon : displays an icon in the statusbar if the page contains
+    a microformat
+  - Search Bar : launch web searches from the konqueror toolbar
+  - Translate : language translation for the current page using Babelfish
+  - UserAgent Changer : allows the detected UserAgent to be modified
+  - Website Validators : CSS and HTML validation tools
+  - Web Archiver : creates archives of websites
+  - Crash manager : restore your opened tabs if konqueror crashes (disabled
+    by default as konqueror 4 has this feature builtin)
  .
  File management plugins :
- - Image Gallery : an easy way to generate a HTML image gallery
- - File Size View (kpart) : a proportional view of directories and files
- based on file size
- - Transform Image (service menu) : rotate and flip images
- - Convert To (service menu) : convert and image to another format
- - Directory Filter (dolphin) : filter directory views
+  - Image Gallery : an easy way to generate a HTML image gallery
+  - File Size View (kpart) : a proportional view of directories and files
+    based on file size
+  - Transform Image (service menu) : rotate and flip images
+  - Convert To (service menu) : convert and image to another format
+  - Directory Filter (dolphin) : filter directory views
  .
  These plugins are not part of the official KDE4 desktop, they are a
  extragear software and may get out of sync of konqueror.

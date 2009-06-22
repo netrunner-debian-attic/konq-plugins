@@ -5,7 +5,7 @@ Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Build-Depends: debhelper (>= 6), cmake, quilt (>= 0.40), cdbs, libtidy-dev,
  pkg-kde-tools (>= 0.4.2), libkonq5-dev (>= 4:4.2.0)
 Uploaders: Xavier Vello <xavier.vello@gmail.com>, Didier Raboud <didier@raboud.com>
-Standards-Version: 3.8.1
+Standards-Version: 3.8.2
 
 Package: konq-plugins
 Architecture: any
@@ -49,6 +49,7 @@ Description: plugins for Konqueror, the KDE file/web/doc browser
 
 Package: konq-plugins-l10n
 Architecture: all
+Section: localization
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: konq-plugins (>= 4:4.2.3)
 Conflicts: kde-i18n, konq-plugins (<= 4:4.2.2)

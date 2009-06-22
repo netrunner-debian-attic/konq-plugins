@@ -51,9 +51,9 @@ Package: konq-plugins-l10n
 Architecture: all
 Section: localization
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: konq-plugins (>= 4:4.2.3)
-Conflicts: kde-i18n, konq-plugins (<= 4:4.2.2)
-Replaces: konq-plugins (<= 4:4.2.2)
+Recommends: konq-plugins (>= 4:4.2.4)                                              
+Conflicts: kde-i18n, konq-plugins (< 4:4.2.4)                                      
+Replaces: konq-plugins (< 4:4.2.4)
 Description: plugins for Konqueror, the KDE file/web/doc browser (localisation)
  This package contains the translations for the useful plugins for Konqueror
  from package konq-plugins.

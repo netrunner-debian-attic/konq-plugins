@@ -1,4 +1,4 @@
-konq-plugins (4:4.2.4-1) unstable; urgency=low
+konq-plugins (4:4.2.4-1) UNRELEASED; urgency=low
 
   * New upstream release.
   * debian/{watch,rules}
@@ -10,6 +10,8 @@ konq-plugins (4:4.2.4-1) unstable; urgency=low
   * Split package in konq-plugins{,-l10n} to spare disk space and bandwidth.
     - Don't forget to split out non-en documentation.
     - Put -l10n in Section: localization.
+
+  * TODO: Copyright
 
  -- Didier Raboud <didier@raboud.com>  Mon, 11 May 2009 17:52:09 +0200
 

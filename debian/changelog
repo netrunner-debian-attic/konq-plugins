@@ -10,8 +10,7 @@ konq-plugins (4:4.2.4-1) UNRELEASED; urgency=low
   * Split package in konq-plugins{,-l10n} to spare disk space and bandwidth.
     - Don't forget to split out non-en documentation.
     - Put -l10n in Section: localization.
-
-  * TODO: Copyright
+  * debian/copyright: Update
 
  -- Didier Raboud <didier@raboud.com>  Mon, 11 May 2009 17:52:09 +0200
 

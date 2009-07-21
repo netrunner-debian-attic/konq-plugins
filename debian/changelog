@@ -1,3 +1,9 @@
+konq-plugins (4:4.2.4-2) UNRELEASED; urgency=low
+
+  * Correctly include the icons in /usr/share/icons/, thanks to Pino Toscano. 
+
+ -- Didier Raboud <didier@raboud.com>  Tue, 21 Jul 2009 15:48:34 +0200
+
 konq-plugins (4:4.2.4-1) unstable; urgency=low
 
   * New upstream release.

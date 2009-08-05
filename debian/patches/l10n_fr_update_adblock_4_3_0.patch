@@ -1,0 +1,132 @@
+Index: konq-plugins-4.3.0.obsolete.0.776839013750763/po/fr/adblock.po
+===================================================================
+--- konq-plugins-4.3.0.obsolete.0.776839013750763.orig/po/fr/adblock.po	2009-08-05 18:56:33.000000000 +0200
++++ konq-plugins-4.3.0.obsolete.0.776839013750763/po/fr/adblock.po	2009-08-05 18:56:37.000000000 +0200
+@@ -3,13 +3,14 @@
+ # This file is distributed under the same license as the PACKAGE package.
+ #
+ # Mickael Sibelle <kimael@gmail.com>, 2009.
++# Didier Raboud <didier@raboud.com>, 2009.
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: adblock\n"
+ "Report-Msgid-Bugs-To: http://bugs.kde.org\n"
+ "POT-Creation-Date: 2009-07-22 13:07+0200\n"
+ "PO-Revision-Date: 2009-05-18 20:10+0200\n"
+-"Last-Translator: Mickael Sibelle <kimael@gmail.com>\n"
++"Last-Translator: Didier Raboud <didier@raboud.com>\n"
+ "Language-Team: Francais <kde-francophone@kde.org>\n"
+ "MIME-Version: 1.0\n"
+ "Content-Type: text/plain; charset=UTF-8\n"
+@@ -23,28 +24,20 @@
+ msgstr "Adblock"
+ 
+ #: adblock.cpp:77
+-#, fuzzy
+-#| msgid "Show Elements..."
+ msgid "Show Blockable Elements..."
+-msgstr "Afficher les éléments..."
++msgstr "Afficher les éléments bloquables..."
+ 
+ #: adblock.cpp:82 adblockdialog.cpp:96
+-#, fuzzy
+-#| msgid "Configure..."
+ msgid "Configure Filters..."
+-msgstr "Configurer..."
++msgstr "Configurer les filtres..."
+ 
+ #: adblock.cpp:91
+-#, fuzzy
+-#| msgid "Disable for this page"
+ msgid "No blocking for this page"
+-msgstr "Désactiver pour cette page"
++msgstr "Ne pas bloquer pour cette page"
+ 
+ #: adblock.cpp:96
+-#, fuzzy
+-#| msgid "Disable for this site"
+ msgid "No blocking for this site"
+-msgstr "Désactiver pour ce site"
++msgstr "Ne pas bloquer pour ce site"
+ 
+ #: adblock.cpp:172
+ msgid "Please enable Konqueror's Adblock"
+@@ -64,31 +57,27 @@
+ 
+ #: adblock.cpp:210
+ msgid "frame"
+-msgstr ""
++msgstr "cadre"
+ 
+ #: adblock.cpp:231
+ msgid "image"
+ msgstr "image"
+ 
+ #: adblockdialog.cpp:93
+-#, fuzzy
+-#| msgid "All blockable items in this page:"
+ msgid "Blockable items on this page"
+-msgstr "Tous les éléments pouvant être bloqués dans cette page :"
++msgstr "Tous les éléments pouvant être bloqués sur cette page :"
+ 
+ #: adblockdialog.cpp:97
+ msgid "Add filter"
+-msgstr ""
++msgstr "Ajouter un filtre"
+ 
+ #: adblockdialog.cpp:106
+ msgid "Search:"
+-msgstr ""
++msgstr "Rechercher :"
+ 
+ #: adblockdialog.cpp:113
+-#, fuzzy
+-#| msgid "All blockable items in this page:"
+ msgid "Blockable items:"
+-msgstr "Tous les éléments pouvant être bloqués dans cette page :"
++msgstr "Tous les éléments pouvant être bloqués :"
+ 
+ #: adblockdialog.cpp:122
+ msgid "Source"
+@@ -100,11 +89,11 @@
+ 
+ #: adblockdialog.cpp:122
+ msgid "Tag"
+-msgstr ""
++msgstr "Tag"
+ 
+ #: adblockdialog.cpp:148
+ msgid "New filter (can use *?[] wildcards, prefix with @@ for white list):"
+-msgstr ""
++msgstr "Nouveau filtre (peut utiliser les substituts *?[], préfixer par @@ pour la liste blanche) :"
+ 
+ #: adblockdialog.cpp:168
+ msgid "Filter this item"
+@@ -115,16 +104,12 @@
+ msgstr "Filtrer tous les éléments ayant le même emplacement"
+ 
+ #: adblockdialog.cpp:170
+-#, fuzzy
+-#| msgid "Filter all items at same path"
+ msgid "Filter all items from same host"
+-msgstr "Filtrer tous les éléments ayant le même emplacement"
++msgstr "Filtrer tous les éléments du même hôte"
+ 
+ #: adblockdialog.cpp:171
+-#, fuzzy
+-#| msgid "Filter all items at same path"
+ msgid "Filter all items from same domain"
+-msgstr "Filtrer tous les éléments ayant le même emplacement"
++msgstr "Filtrer tous les éléments du même domaine"
+ 
+ #: adblockdialog.cpp:173
+ msgid "Add this item to white list"
+@@ -136,7 +121,7 @@
+ 
+ #: adblockdialog.cpp:178
+ msgid "View item"
+-msgstr ""
++msgstr "Voir l'élément"
+ 
+ #. i18n: file: plugin_adblock.rc:4
+ #. i18n: ectx: Menu (tools)

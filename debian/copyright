@@ -1,0 +1,219 @@
+This package was debianized by Xavier Vello <xavier.vello@gmail.com> on
+Mon, 30 Jun 2008 14:04:05 +0200.
+
+It was downloaded from ftp://ftp.kde.org
+
+Upstream Authors:
+
+Copyright: © 2005 Florian Roth <florian@synatic.net>
+Copyright: © 2002-2003 Josef Weidendorfer <Josef.Weidendorfer@gmx.de>
+Copyright: © 2001, 2003 Andreas Schlapbach <schlpbch@iam.unibe.ch>
+Copyright: © 2008-2009 Pino Toscano <pino@kde.org>
+Copyright: © 2004 Teemu Rytilahti <tpr@d5k.net>
+Copyright: © 2005 Leo Savernik <l.savernik@aon.at>
+Copyright: © 2001 Joseph Wenninger <jowenn@kde.org>
+Copyright: © 2006 Daniele Galdi <daniele.galdi@gmail.com>
+Copyright: © 2002-2003 Alexander Kellett <lypanov@kde.org>
+Copyright: © 2001, 2003 Lukas Tinkl <lukas@kde.org>
+Copyright: © 2005 George Staikos <staikos@kde.org>
+Copyright: © 2008 Laurent Montel <montel@kde.org>
+Copyright: © 2000-2002 Dawit Alemayehu <adawit@kde.org>
+Copyright: © 2002 Anders Lund <anders@alweb.dk>
+Copyright: © 2003-2004 Franck Quélain <shift@free.fr>
+Copyright: © 2004 Gary Cramblitt <garycramblitt@comcast.net>
+Copyright: © 2004 Arend van Beelen <arend@auton.nl>
+Copyright: © 2004 Kevin Krammer <kevin.krammer@gmx.at>
+Copyright: © 2001 Carsten Pfeiffer <pfeiffer@kde.org>
+Copyright: © 2003 Richard J. Moore <rich@kde.org>
+Copyright: © 2008 Harri Porten <kde-kafka@master.kde.org>
+Copyright: © 2008 Matthias Grimrath <maps4711@gmx.de>
+Copyright: © 2001 The Kafka Team/Andreas Schlapbach
+Copyright: © 2001 Kurt Granroth <granroth@kde.org>
+Copyright: © 2001 Richard Moore <rich@kde.org>
+Copyright: © 2001 Malte Starostik <malte@kde.org>
+Copyright: © 2003 Rand2342 <rand2342@yahoo.com>
+Copyright: © 2003 Antonio Larrosa <larrosa@kde.org>
+Copyright: © 2004-2006 Olivier Goffart
+Copyright: © 2008 Montel Laurent <montel@kde.org>
+Copyright: © 2007 Paulo Moura Guedes <moura@kdewebdev.org>
+Copyright: © 2000 gis and malte
+Copyright: © 2002 Gene Cash All Rights Reserved.
+
+
+License for all components unless stated otherwise:
+--
+  GNU General Public License, version 2 or later (GPL-2+)
+  
+    However, the license of 155 files was not explicitly specified:
+
+    *
+    autorefresh/*
+    ? babelfish/config-babelfish.h.cmake
+    doc/*
+    ? domtreeviewer/plugin_domtreeviewer.cpp
+    ? domtreeviewer/plugin_domtreeviewer.h
+    ? fsview/main.cpp
+    imagerotation/* excluding:
+    -+ imagerotation/exif.py
+    mediarealfolder/*
+    searchbar/icons/*
+    sidebar/*
+   
+  On Debian systems, the complete text of the
+  GNU General Public License version 2 can be found in
+  /usr/share/common-licenses/GPL-2
+--
+
+Other used licenses:
+--
+  BSD License, specific for Gene Cash
+    The following file is licensed under this license:
+
+    + imagerotation/exif.py
+
+  Contains code from "exifdump.py" originally written by Thierry Bousch
+  <bousch@topo.math.u-psud.fr> and released into the public domain.
+
+  This copyright license is intended to be similar to the FreeBSD license.
+
+  Copyright 2002 Gene Cash All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without modification,
+  are permitted provided that the following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice, this
+     list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+  
+  THIS SOFTWARE IS PROVIDED BY GENE CASH ``AS IS'' AND ANY EXPRESS OR IMPLIED
+  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+  SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+--
+
+--
+  BSD License
+    The following file is licensed under this license:
+    
+    + validators/FindLibTidy.cmake
+    
+  Copyright (c) 2007, Paulo Moura Guedes, <moura@kdewebdev.org>
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+  1. Redistributions of source code must retain the above copyright
+     notice, this list of conditions and the following disclaimer.
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in the
+     documentation and/or other materials provided with the distribution.
+  3. Neither the name of the University nor the names of its contributors
+     may be used to endorse or promote products derived from this software
+     without specific prior written permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+  SUCH DAMAGE.
+  
+  On Debian systems, the complete text of the
+  BSD License can be found in
+  /usr/share/common-licenses/BSD
+--
+
+--
+  GNU General Public License, version 2 (GPL-2)
+    
+    fsview/*
+    sidebar/metabar/*
+    
+  On Debian systems, the complete text of the
+  GNU General Public License version 2 can be found in
+  /usr/share/common-licenses/GPL-2
+--
+
+--
+  GNU Library General Public License, version 2 (LGPL-2)
+    
+    babelfish/*
+    dirfilter/*
+    kimgalleryplugin/*
+
+  On Debian systems, the complete text of the
+  GNU Library General Public License version 2 can be found in
+  /usr/share/common-licenses/LGPL-2
+--
+
+--
+  GNU Library General Public License, version 2 or later (LGPL-2+)
+    
+    crashes/*
+    domtreeviewer/* excluding:
+     - domtreeviewer/domlistviewitem.* (GPL-2+)
+     - domtreeviewer/domtreeview.*  (GPL-2+)
+    minitools/*
+    uachanger/*
+    validators/* excluding:
+     - validators/clickiconlabel.* (GPL-2+)
+     - validators/reportdialog.* (GPL-2+)
+     - validators/tidy_validator.* (GPL-2+)
+     - validators/archivedialog.* (GPL-2+)
+     - validators/FindLibTidy.cmake (BSD)
+    webarchiver/*
+
+  On Debian systems, the complete text of the
+  GNU Library General Public License version 2 can be found in
+  /usr/share/common-licenses/LGPL-2
+--
+
+--
+  MIT-like License (MIT)
+    6 files are licensed under this license:
+
+    sidebar/mediaplayer/* 
+
+  Permission is hereby granted, free of charge, to any person
+  obtaining a copy of this software and associated documentation
+  files (the "Software"), to deal in the Software without
+  restriction, including without limitation the rights to use,
+  copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the
+  Software is furnished to do so, subject to the following
+  conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  OTHER DEALINGS IN THE SOFTWARE.
+
+--
+
+--
+  The Debian packaging is
+    © 2008, Xavier Vello <xavier.vello@gmail.com>
+    © 2009, Didier Raboud <didier@raboud.com>
+  and is licensed under the GPL, see above.
+--

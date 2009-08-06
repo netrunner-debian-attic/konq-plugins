@@ -1,3 +1,7 @@
+Description: Complete the fr(ench) translation for the AdBlocK plugin.
+Origin: vendor
+Author: Didier 'OdyX' Raboud <didier@raboud.com>
+Last-Update: 2009-08-05
 Index: konq-plugins-4.3.0.obsolete.0.776839013750763/po/fr/adblock.po
 ===================================================================
 --- konq-plugins-4.3.0.obsolete.0.776839013750763.orig/po/fr/adblock.po	2009-08-05 18:56:33.000000000 +0200

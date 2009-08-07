@@ -1,11 +1,11 @@
-konq-plugins (4:4.3.0-1) UNRELEASED; urgency=low
+konq-plugins (4:4.3.0-1) unstable; urgency=low
 
   * New upstream release.
   * Correctly include the icons in /usr/share/icons/, thanks to Pino Toscano. 
   * Add patch l10n_fr_update_adblock_4_3_0.patch to get complete french
     translation.
 
- -- Didier Raboud <didier@raboud.com>  Wed, 05 Aug 2009 16:25:06 +0200
+ -- Didier Raboud <didier@raboud.com>  Thu, 06 Aug 2009 10:41:15 +0200
 
 konq-plugins (4:4.2.4-1) unstable; urgency=low
 

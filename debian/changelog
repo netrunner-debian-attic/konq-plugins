@@ -1,3 +1,11 @@
+konq-plugins (4:4.3.1-1) unstable; urgency=low
+
+  * New upstream release (Closes: #551920)
+  * Remove l10n_fr_update_adblock_4_3_0.patch, integrated upstream
+  * Upgraded to standards 3.8.3
+
+ -- Xavier Vello <xavier.vello@gmail.com>  Sat, 24 Oct 2009 15:40:25 +0200
+
 konq-plugins (4:4.3.0-1) unstable; urgency=low
 
   * New upstream release.

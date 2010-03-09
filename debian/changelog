@@ -1,16 +1,18 @@
 konq-plugins (4:4.4.0-1) UNRELEASED; urgency=low
 
+  [ Xavier Vello ]
   * New upstream release 4.4.0 (Closes: #551920)
   * Removed l10n_fr_update_adblock_4_3_0.patch, integrated upstream
   * Upgraded to standards 3.8.4
   * Moved to version 3.0 (quilt) packaging
   * Corrected versionned conflict for konq-plugins-l10n
   * Add DM-Upload-Allowed bit
+  * s/KDE/KDE SC/
 
   [ Pino Toscano ]
   * Tweak the descriptions a bit.
 
- -- Xavier Vello <xavier.vello@gmail.com>  Tue, 09 Mar 2010 19:07:17 +0100
+ -- Xavier Vello <xavier.vello@gmail.com>  Wed, 10 Mar 2010 00:46:20 +0100
 
 konq-plugins (4:4.3.0-1) unstable; urgency=low
 

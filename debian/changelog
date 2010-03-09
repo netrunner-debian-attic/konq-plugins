@@ -7,7 +7,10 @@ konq-plugins (4:4.4.0-1) UNRELEASED; urgency=low
   * Corrected versionned conflict for konq-plugins-l10n
   * Add DM-Upload-Allowed bit
 
- -- Xavier Vello <xavier.vello@gmail.com>  Mon, 01 Mar 2010 13:37:39 +0100
+  [ Pino Toscano ]
+  * Tweak the descriptions a bit.
+
+ -- Xavier Vello <xavier.vello@gmail.com>  Tue, 09 Mar 2010 19:07:17 +0100
 
 konq-plugins (4:4.3.0-1) unstable; urgency=low
 

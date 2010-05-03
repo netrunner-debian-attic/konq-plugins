@@ -12,6 +12,9 @@ konq-plugins (4:4.4.0-1) UNRELEASED; urgency=low
   [ Pino Toscano ]
   * Tweak the descriptions a bit.
 
+  [ Didier Raboud ]
+  * Add Vcs-* fields to debian/control
+
  -- Xavier Vello <xavier.vello@gmail.com>  Wed, 10 Mar 2010 00:46:20 +0100
 
 konq-plugins (4:4.3.0-1) unstable; urgency=low

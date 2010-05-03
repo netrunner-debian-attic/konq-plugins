@@ -7,6 +7,8 @@ Build-Depends: debhelper (>= 6), cmake, cdbs, libtidy-dev,
 Uploaders: Xavier Vello <xavier.vello@gmail.com>, Didier Raboud <didier@raboud.com>
 DM-Upload-Allowed: yes
 Standards-Version: 3.8.4
+Vcs-Svn: svn://svn.debian.org/pkg-kde/kde-extras/konq-plugins/trunk/
+Vcs-Browser: http://svn.debian.org/wsvn/pkg-kde/kde-extras/konq-plugins/?op=log
 
 Package: konq-plugins
 Architecture: any

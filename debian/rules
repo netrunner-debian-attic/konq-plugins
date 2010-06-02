@@ -1,18 +1,12 @@
 #!/usr/bin/make -f
 
-include /usr/share/pkg-kde-tools/makefiles/1/cdbs/kde.mk
-include /usr/share/cdbs/1/rules/debhelper.mk
+%:
+	dh --with kde $@
 
-DEB_DH_INSTALL_SOURCEDIR := debian/tmp
+override_dh_installman:
+	dh_installman --language=C
 
-binary-install/konq-plugins::
-	dh_installman -pkonq-plugins --language=C debian/man/*.1
-
-binary-install/konq-plugins-l10n::
+override_dh_install:
+	dh_install
 	# Rip english off (already included in konq-plugins)
 	rm -Rf debian/konq-plugins-l10n/usr/share/doc/kde/HTML/en
-
-get-orig-source::
-	@@dh_testdir
-	@@[ -d ../tarballs/. ]||mkdir -p ../tarballs
-	@@uscan --force-download --repack --destdir ../tarballs

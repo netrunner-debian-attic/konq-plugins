@@ -10,7 +10,7 @@ binary-install/konq-plugins::
 
 binary-install/konq-plugins-l10n::
 	# Rip english off (already included in konq-plugins)
-	rm -Rf debian/konq-plugins-l10n/usr/share/doc/kde4/HTML/en
+	rm -Rf debian/konq-plugins-l10n/usr/share/doc/kde/HTML/en
 
 get-orig-source::
 	@@dh_testdir

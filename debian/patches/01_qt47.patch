@@ -1,0 +1,14 @@
+Description: Fixes build under Qt4.7/Gcc4.5
+Origin: upstream
+Last-Update: 2011-03-14
+--- a/adblock/adblock.cpp
++++ b/adblock/adblock.cpp
+@@ -300,7 +300,7 @@
+ // ----------------------------------------------------------------------------
+ 
+ AdElement::AdElement() :
+-  m_url(0), m_category(0), m_type(0), m_blocked(false) {}
++  m_url(QString()), m_category(QString()), m_type(QString()), m_blocked(false) {}
+ 
+ AdElement::AdElement(const QString &url, const QString &category,
+ 		     const QString &type, bool blocked, const DOM::Node&node) :

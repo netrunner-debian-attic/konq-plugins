@@ -4,8 +4,7 @@ Priority: extra
 Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 Build-Depends: debhelper (>= 7.0.50), cmake, libtidy-dev,
  pkg-kde-tools (>= 0.9), libkonq5-dev (>= 4:4.2.0)
-Uploaders: Didier Raboud <didier@raboud.com>
-DM-Upload-Allowed: yes
+Uploaders: Didier Raboud <odyx@debian.org>
 Standards-Version: 3.8.4
 Vcs-Svn: svn://svn.debian.org/pkg-kde/kde-extras/konq-plugins/trunk/
 Vcs-Browser: http://svn.debian.org/wsvn/pkg-kde/kde-extras/konq-plugins/?op=log

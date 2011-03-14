@@ -1,4 +1,4 @@
-konq-plugins (4:4.4.0-2) UNRELEASED; urgency=low
+konq-plugins (4:4.4.0-2) unstable; urgency=low
 
   * Move docs from /u/s/d/kde4/HTML to /u/s/d/kde/HTML.
     - Bump B-D to pkg-kde-tools to >= 0.9
@@ -7,7 +7,7 @@ konq-plugins (4:4.4.0-2) UNRELEASED; urgency=low
     - Bump B-D to debhelper to >= 7.0.50, drop cdbs
     - Bump compat to 7
 
- -- Didier Raboud <didier@raboud.com>  Wed, 02 Jun 2010 09:16:48 +0200
+ -- Didier Raboud <didier@raboud.com>  Wed, 02 Jun 2010 10:25:47 +0200
 
 konq-plugins (4:4.4.0-1) unstable; urgency=low
 

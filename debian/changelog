@@ -1,3 +1,15 @@
+konq-plugins (4:4.4.0-3) unstable; urgency=low
+
+  * Add 01_qt47.patch from Ubuntu to fix FTBFS (Closes: #618058).
+  * Remove the explicit debian/copyright reference to the common-licenses'
+    BSD license text.
+  * Drop Pre-stable Conflicts/Replaces.
+  * Move packaging from SVN to Git, update Vcs-* fields.
+  * Use my @d.o address and remove the DMUA flag.
+  * Bump Standards version to 3.9.1 without more changes needed.
+
+ -- Didier Raboud <odyx@debian.org>  Mon, 14 Mar 2011 17:29:21 +0100
+
 konq-plugins (4:4.4.0-2) unstable; urgency=low
 
   * Move docs from /u/s/d/kde4/HTML to /u/s/d/kde/HTML.

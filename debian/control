@@ -49,14 +49,14 @@ Description: plugins for Konqueror, the KDE file/web/document browser
  These plugins are not part of the official KDE Software Compilation, they
  are a KDE Extragear software and may get out of sync with Konqueror.
 
-Package: konq-plugins-l10n
-Architecture: all
-Section: localization
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Conflicts: kde-i18n
-Description: plugins for Konqueror, the KDE file/web/doc browser (localisation)
- This package contains the translations for the useful plugins for Konqueror
- from package konq-plugins.
- .
- These plugins are not part of the official KDE Software Compilation, they
- are a KDE Extragear software and may get out of sync with Konqueror.
+#Package: konq-plugins-l10n
+#Architecture: all
+#Section: localization
+#Depends: ${shlibs:Depends}, ${misc:Depends}
+#Conflicts: kde-i18n
+#Description: plugins for Konqueror, the KDE file/web/doc browser (localisation)
+# This package contains the translations for the useful plugins for Konqueror
+# from package konq-plugins.
+# .
+# These plugins are not part of the official KDE Software Compilation, they
+# are a KDE Extragear software and may get out of sync with Konqueror.

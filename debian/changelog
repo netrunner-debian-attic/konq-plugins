@@ -1,3 +1,9 @@
+konq-plugins (4:4.6.1-1) UNRELEASED; urgency=low
+
+  *
+
+ -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Sat, 21 May 2011 18:53:21 -0300
+
 konq-plugins (4:4.4.0-3) unstable; urgency=low
 
   * Add 01_qt47.patch from Ubuntu to fix FTBFS (Closes: #618058).

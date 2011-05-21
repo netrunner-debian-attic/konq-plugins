@@ -14,6 +14,7 @@ konq-plugins (4:4.6.1-1) UNRELEASED; urgency=low
   * Add myself to Uploaders.
   * Set DM-Upload-Allowed: yes.
   * Bump Standards-Version to 3.9.2, no changes needed.
+  * Fix spelling error discovered by Lintian (allows to / allows one to).
 
  -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Sat, 21 May 2011 18:53:21 -0300
 

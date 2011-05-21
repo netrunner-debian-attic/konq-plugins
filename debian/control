@@ -22,7 +22,7 @@ Description: plugins for Konqueror, the KDE file/web/document browser
  plugins will appear in Konqueror's Tools menu.
  .
  Web navigation plugins:
-  - Akregator feed icon: allows to add a feed to Akregator from Konqueror
+  - Akregator feed icon: allows one to add a feed to Akregator from Konqueror
   - Auto Refresh: refresh a webpage at a given rate
   - Bookmarklets: enables the use of bookmarklets, bookmarks containing
     JavaScript code

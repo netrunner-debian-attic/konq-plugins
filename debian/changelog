@@ -9,6 +9,8 @@ konq-plugins (4:4.6.1-1) UNRELEASED; urgency=low
     - Remove konq-plugins-l10n.install and konq-plugins.install, as they
       are not needed anymore.
     - Comment out konq-plugins-l10n in debian/control.
+    - Remove dh_install_override, we don't need to remove stuff we no longer
+      ship.
 
  -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Sat, 21 May 2011 18:53:21 -0300
 

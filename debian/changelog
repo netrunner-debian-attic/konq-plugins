@@ -12,6 +12,7 @@ konq-plugins (4:4.6.1-1) UNRELEASED; urgency=low
     - Remove dh_install_override, we don't need to remove stuff we no longer
       ship.
   * Add myself to Uploaders.
+  * Set DM-Upload-Allowed: yes.
 
  -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Sat, 21 May 2011 18:53:21 -0300
 

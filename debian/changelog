@@ -1,7 +1,8 @@
-konq-plugins (4:4.6.1-0r1) UNRELEASED; urgency=low
+konq-plugins (4:4.6.1-1) unstable; urgency=low
+
+  * New upstream release.
 
   [ Lisandro Damián Pérez Meyer ]
-  * New upstream release.
   * Remove 01_qt47.patch, it is not necessary anymore.
     - Remove debian/patches/series, as it is empty.
   * Add libstreamanalyzer-dev and libstreams-dev as B-D.
@@ -21,7 +22,7 @@ konq-plugins (4:4.6.1-0r1) UNRELEASED; urgency=low
   * Build depend on kde-sc-dev-latest (>= 4:4.6.3) and libkonq5-dev (>= 4:4.6).
   * Add zlib1g-dev build depend.
 
- -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Sat, 21 May 2011 18:53:21 -0300
+ -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Thu, 26 May 2011 23:42:04 +0300
 
 konq-plugins (4:4.4.0-3) unstable; urgency=low
 

@@ -15,7 +15,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, konqueror (>= 4:4.1.0),
  python, libjpeg-progs
 Enhances: konqueror
-Recommends: imagemagick, konq-plugins-l10n
+Recommends: imagemagick
 Description: plugins for Konqueror, the KDE file/web/document browser
  This package contains a variety of useful plugins for Konqueror, the
  file manager, web browser and document viewer for KDE.  Many of these

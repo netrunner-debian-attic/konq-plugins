@@ -1,6 +1,6 @@
 konq-plugins (4:4.6.1-1) UNRELEASED; urgency=low
 
-  [Lisandro Damián Pérez Meyer]
+  [ Lisandro Damián Pérez Meyer ]
   * New upstream release.
   * Remove 01_qt47.patch, it is not necessary anymore.
     - Remove debian/patches/series, as it is empty.
@@ -16,6 +16,9 @@ konq-plugins (4:4.6.1-1) UNRELEASED; urgency=low
   * Bump Standards-Version to 3.9.2, no changes needed.
   * Fix spelling error discovered by Lintian (allows to / allows one to).
   * Enable parallel building.
+
+  [ José Manuel Santamaría Lema ]
+  * Build depend on kde-sc-dev-latest (>= 4:4.6.3) and libkonq5-dev (>= 4:4.6).
 
  -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Sat, 21 May 2011 18:53:21 -0300
 

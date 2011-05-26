@@ -19,6 +19,7 @@ konq-plugins (4:4.6.1-1) UNRELEASED; urgency=low
 
   [ José Manuel Santamaría Lema ]
   * Build depend on kde-sc-dev-latest (>= 4:4.6.3) and libkonq5-dev (>= 4:4.6).
+  * Add zlib1g-dev build depend.
 
  -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Sat, 21 May 2011 18:53:21 -0300
 

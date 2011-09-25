@@ -1,3 +1,9 @@
+konq-plugins (4:4.6.1-2) unstable; urgency=low
+
+
+
+ -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Sun, 25 Sep 2011 14:31:08 -0300
+
 konq-plugins (4:4.6.1-1) unstable; urgency=low
 
   * New upstream release.

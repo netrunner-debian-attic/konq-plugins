@@ -6,7 +6,7 @@ Build-Depends: kde-sc-dev-latest (>= 4:4.6.3),
  debhelper (>= 7.0.50), cmake, libtidy-dev,
  pkg-kde-tools (>= 0.9), libkonq5-dev (>= 4:4.6), libstreamanalyzer-dev, libstreams-dev,
  zlib1g-dev
-Uploaders: Didier Raboud <odyx@debian.org>, Lisandro Damián Nicanor Pérez Meyer <perezmeyer@gmail.com>
+Uploaders: Didier Raboud <odyx@debian.org>, Lisandro Damián Nicanor Pérez Meyer <lisandro@debian.org>
 DM-Upload-Allowed: yes
 Standards-Version: 3.9.2
 Vcs-Git: git://git.debian.org/pkg-kde/kde-extras/konq-plugins.git

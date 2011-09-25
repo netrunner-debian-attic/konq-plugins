@@ -1,6 +1,7 @@
 konq-plugins (4:4.6.1-2) unstable; urgency=low
 
-
+  [ Lisandro Damián Nicanor Pérez Meyer ]
+  * Change my e-mail address.
 
  -- Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>  Sun, 25 Sep 2011 14:31:08 -0300
 
